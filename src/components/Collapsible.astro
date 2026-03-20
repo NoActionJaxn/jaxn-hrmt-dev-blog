@@ -1,0 +1,78 @@
+---
+import classNames from "classnames";
+import Accent from "./Accent.astro";
+
+interface Props {
+  title: string;
+  open?: boolean;
+  class?: string;
+}
+
+const { title, open = false, class: className } = Astro.props;
+---
+
+<div
+  class={classNames("border-2 border-neutral-800", className)}
+  data-collapsible
+>
+  <button
+    type="button"
+    class="flex w-full items-center justify-between px-3 py-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+    data-collapsible-trigger
+    aria-expanded={open ? "true" : "false"}
+  >
+    <Accent as="span" size="sm">{title}</Accent>
+    <i
+      class={classNames("fa-solid fa-chevron-down text-neutral-800 text-sm", {
+        "rotate-180": open,
+      })}
+      data-collapsible-icon
+    />
+  </button>
+  <div
+    class={classNames("px-3 pb-3 font-sans text-neutral-700", { hidden: !open })}
+    data-collapsible-content
+  >
+    <slot />
+  </div>
+</div>
+
+<script>
+  function collapseItem(item: HTMLElement) {
+    const trigger = item.querySelector<HTMLButtonElement>("[data-collapsible-trigger]")!;
+    const content = item.querySelector<HTMLElement>("[data-collapsible-content]")!;
+    const icon = item.querySelector<HTMLElement>("[data-collapsible-icon]")!;
+    content.classList.add("hidden");
+    icon.classList.remove("rotate-180");
+    trigger.setAttribute("aria-expanded", "false");
+  }
+
+  function expandItem(item: HTMLElement) {
+    const trigger = item.querySelector<HTMLButtonElement>("[data-collapsible-trigger]")!;
+    const content = item.querySelector<HTMLElement>("[data-collapsible-content]")!;
+    const icon = item.querySelector<HTMLElement>("[data-collapsible-icon]")!;
+    content.classList.remove("hidden");
+    icon.classList.add("rotate-180");
+    trigger.setAttribute("aria-expanded", "true");
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-collapsible]").forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>("[data-collapsible-trigger]")!;
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        collapseItem(root);
+      } else {
+        const group = root.closest<HTMLElement>("[data-collapsible-group]");
+        if (group?.dataset.accordion === "true") {
+          group.querySelectorAll<HTMLElement>(":scope > [data-collapsible]").forEach((sibling) => {
+            if (sibling !== root) collapseItem(sibling);
+          });
+        }
+        expandItem(root);
+      }
+    });
+  });
+</script>

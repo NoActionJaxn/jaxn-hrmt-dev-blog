@@ -1,0 +1,41 @@
+---
+import classNames from "classnames";
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Size = "sm" | "base" | "lg";
+
+type Props<JSXTag extends HTMLTag = "span"> = Polymorphic<{ as: JSXTag }> & {
+  size?: Size;
+  asChild?: boolean;
+  class?: string;
+};
+
+const {
+  as: JSXTag = "span",
+  size = "base",
+  asChild = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const baseClasses =
+  "inline-block font-accent uppercase text-neutral-100 bg-neutral-800 px-2 py-1 hover:bg-neutral-700 active:text-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 cursor-pointer";
+
+const sizeClasses = classNames({
+  "text-xs": size === "sm",
+  "text-sm": size === "base",
+  "text-base": size === "lg",
+});
+
+const classes = classNames(baseClasses, sizeClasses, className);
+---
+
+{
+  asChild ? (
+    <slot />
+  ) : (
+    <JSXTag class={classes} {...rest}>
+      <slot />
+    </JSXTag>
+  )
+}

@@ -1,0 +1,36 @@
+---
+import classNames from "classnames";
+import Button from "./Button.astro";
+import Accent from "./Accent.astro";
+import Text from "./Text.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class={classNames("border-2 border-neutral-800", className)}
+  data-confirm-dialog
+>
+  <div class="p-4 flex flex-col gap-2">
+    <Accent as="h3" size="sm">{title}</Accent>
+    <Text as="p">{description}</Text>
+    <div class="flex justify-end gap-2 mt-2">
+      <Button size="sm" data-confirm-dialog-confirm>{confirmLabel}</Button>
+      <Button size="sm" variant="outline" data-confirm-dialog-cancel>{cancelLabel}</Button>
+    </div>
+  </div>
+</div>

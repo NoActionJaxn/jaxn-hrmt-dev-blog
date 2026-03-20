@@ -1,0 +1,45 @@
+---
+import classNames from "classnames";
+
+type Size = "xs" | "sm" | "base" | "lg" | "xl";
+type Variant = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+type Props = {
+  size?: Size;
+  variant?: Variant;
+  asChild?: boolean;
+  class?: string;
+};
+
+const {
+  size = "base",
+  variant = "h1",
+  asChild = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const baseClasses = "font-header tracking-normal";
+
+const sizeClasses = classNames({
+  "text-5xl": size === "xl",
+  "text-4xl": size === "lg",
+  "text-2xl": size === "base",
+  "text-xl": size === "sm",
+  "text-base": size === "xs",
+});
+
+const variantClasses = classNames({
+  "text-neutral-800": variant === "h1" || variant === "h2",
+  "text-neutral-600": variant === "h3" || variant === "h4" || variant === "h5",
+  "text-neutral-900": variant === "h6",
+});
+
+const classes = classNames(baseClasses, sizeClasses, variantClasses, className);
+
+const Tag = variant;
+---
+
+<Tag class={classes} {...rest}>
+  <slot />
+</Tag>

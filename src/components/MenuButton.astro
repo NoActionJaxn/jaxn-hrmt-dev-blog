@@ -1,0 +1,45 @@
+---
+import classNames from "classnames";
+import Button from "./Button.astro";
+
+interface Props {
+  isOpen?: boolean;
+  class?: string;
+  [key: string]: any;
+}
+
+const { isOpen = false, class: className, ...rest } = Astro.props;
+
+const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current";
+---
+
+<Button
+  size="lg"
+  square
+  variant="ghost"
+  class={className}
+  aria-label={isOpen ? "Close menu" : "Open menu"}
+  aria-expanded={isOpen}
+  {...rest}
+>
+  <span class="relative w-5 h-4">
+    <span
+      class={classNames(lineBase, "origin-center", {
+        "top-0": !isOpen,
+        "top-1/2 -translate-y-1/2 rotate-45": isOpen,
+      })}
+    />
+    <span
+      class={classNames(lineBase, "top-1/2 -translate-y-1/2", {
+        "opacity-100": !isOpen,
+        "opacity-0": isOpen,
+      })}
+    />
+    <span
+      class={classNames(lineBase, "origin-center", {
+        "bottom-0": !isOpen,
+        "top-1/2 -translate-y-1/2 -rotate-45": isOpen,
+      })}
+    />
+  </span>
+</Button>

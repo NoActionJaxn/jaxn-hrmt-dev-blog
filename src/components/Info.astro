@@ -1,0 +1,33 @@
+---
+import classNames from "classnames";
+import Text from "./Text.astro";
+
+type Variant = "info" | "success" | "warning" | "danger";
+
+interface Props {
+  variant?: Variant;
+  class?: string;
+}
+
+const { variant = "info", class: className } = Astro.props;
+
+const variantConfig = {
+  info: { bg: "bg-neutral-200", iconBg: "bg-neutral-400", iconColor: "text-neutral-200", icon: "fa-info" },
+  success: { bg: "bg-success-100", iconBg: "bg-success-500", iconColor: "text-white", icon: "fa-check" },
+  warning: { bg: "bg-warning-100", iconBg: "bg-warning-500", iconColor: "text-white", icon: "fa-exclamation" },
+  danger: { bg: "bg-danger-100", iconBg: "bg-danger-500", iconColor: "text-white", icon: "fa-xmark" },
+};
+
+const { bg, iconBg, iconColor, icon } = variantConfig[variant];
+---
+
+<div class={classNames("flex gap-6 items-start p-6", bg, className)}>
+  <div>
+    <div class={classNames("flex size-8 items-center justify-center", iconBg)}>
+      <i class={classNames("fa-solid text-sm", icon, iconColor)}></i>
+    </div>
+  </div>
+  <Text as="div" class="line-clamp-3">
+    <slot />
+  </Text>
+</div>

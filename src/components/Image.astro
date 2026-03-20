@@ -1,0 +1,34 @@
+---
+import classNames from "classnames";
+
+interface Props {
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  loading?: "lazy" | "eager";
+  class?: string;
+}
+
+const { src, alt = "", width, height, loading = "lazy", class: className } = Astro.props;
+---
+
+{src ? (
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    class={classNames("object-cover", className)}
+  />
+) : (
+  <div
+    role="img"
+    aria-label={alt || "Placeholder image"}
+    class={classNames("bg-neutral-300 flex items-center justify-center", className)}
+  >
+    <i class="fa-solid fa-image text-neutral-500 text-2xl" />
+  </div>
+)}

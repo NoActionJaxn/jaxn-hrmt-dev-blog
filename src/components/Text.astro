@@ -1,0 +1,29 @@
+---
+import classNames from "classnames";
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Size = "xs" | "sm" | "base" | "lg" | "xl";
+
+type Props<Tag extends HTMLTag = "span"> = Polymorphic<{ as: Tag }> & {
+  size?: Size;
+  class?: string;
+};
+
+const { as: Tag = "span", size = "base", class: className, ...rest } = Astro.props;
+
+const baseClasses = "font-sans tracking-normal text-neutral-700";
+
+const sizeClasses = classNames({
+  "text-xl": size === "xl",
+  "text-lg": size === "lg",
+  "text-base": size === "base",
+  "text-sm": size === "sm",
+  "text-xs": size === "xs",
+});
+
+const classes = classNames(baseClasses, sizeClasses, className);
+---
+
+<Tag class={classes} {...rest}>
+  <slot />
+</Tag>

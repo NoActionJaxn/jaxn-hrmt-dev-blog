@@ -1,0 +1,18 @@
+---
+import classNames from "classnames";
+
+interface Props {
+  accordion?: boolean;
+  class?: string;
+}
+
+const { accordion = false, class: className } = Astro.props;
+---
+
+<div
+  class={classNames("flex flex-col [&>*+*]:-mt-0.5", className)}
+  data-collapsible-group
+  data-accordion={accordion ? "true" : undefined}
+>
+  <slot />
+</div>
