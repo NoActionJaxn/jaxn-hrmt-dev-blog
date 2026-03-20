@@ -22,7 +22,7 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
   aria-expanded={isOpen}
   {...rest}
 >
-  <span class="relative w-5 h-4">
+  <span class="relative w-5 h-4" aria-hidden="true">
     <span
       class={classNames(lineBase, "origin-center", {
         "top-0": !isOpen,

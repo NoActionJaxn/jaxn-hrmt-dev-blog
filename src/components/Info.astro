@@ -19,12 +19,13 @@ const variantConfig = {
 };
 
 const { bg, iconBg, iconColor, icon } = variantConfig[variant];
+const role = variant === "warning" || variant === "danger" ? "alert" : "status";
 ---
 
-<div class={classNames("flex gap-6 items-start p-6", bg, className)}>
+<div class={classNames("flex gap-6 items-start p-6", bg, className)} role={role}>
   <div>
     <div class={classNames("flex size-8 items-center justify-center", iconBg)}>
-      <i class={classNames("fa-solid text-sm", icon, iconColor)}></i>
+      <i class={classNames("fa-solid text-sm", icon, iconColor)} aria-hidden="true"></i>
     </div>
   </div>
   <Text as="div" class="line-clamp-3">

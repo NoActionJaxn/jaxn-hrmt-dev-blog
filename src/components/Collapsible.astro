@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title, open = false, class: className } = Astro.props;
+const panelId = `collapsible-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <div
@@ -19,7 +20,9 @@ const { title, open = false, class: className } = Astro.props;
     type="button"
     class="flex w-full items-center justify-between px-3 py-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
     data-collapsible-trigger
+    id={`${panelId}-trigger`}
     aria-expanded={open ? "true" : "false"}
+    aria-controls={panelId}
   >
     <Accent as="span" size="sm">{title}</Accent>
     <i
@@ -27,11 +30,15 @@ const { title, open = false, class: className } = Astro.props;
         "rotate-180": open,
       })}
       data-collapsible-icon
+      aria-hidden="true"
     />
   </button>
   <div
     class={classNames("px-3 pb-3 font-sans text-neutral-700", { hidden: !open })}
     data-collapsible-content
+    id={panelId}
+    role="region"
+    aria-labelledby={`${panelId}-trigger`}
   >
     <slot />
   </div>

@@ -1,0 +1,124 @@
+---
+let title = "jaxn hrmt";
+let fullTitle = "jackson hermitt";
+---
+
+<div class="p-4 text-5xl inline-block select-none cursor-pointer" aria-label="jackson hermitt">
+  <span
+    class="font-accent text-accent-500 relative inline-block whitespace-nowrap"
+    style="-webkit-text-stroke: 4px var(--color-accent-900); paint-order: stroke fill;"
+    data-text={title}
+    data-short={title}
+    data-full={fullTitle}
+    aria-hidden="true">{title}</span
+  >
+</div>
+
+<style>
+  [data-text]::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    z-index: -1;
+    -webkit-text-stroke: 4px var(--color-accent-900);
+    paint-order: stroke fill;
+    color: var(--color-accent-900);
+  }
+</style>
+
+<script>
+  import {gsap} from "gsap";
+
+  const chars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~0123456789";
+
+  function setText(el: HTMLElement, text: string) {
+    el.textContent = text;
+    el.dataset.text = text;
+  }
+
+  function scramble(el: HTMLElement, target: string, reverse = false) {
+    const current = el.textContent || "";
+
+    gsap.killTweensOf(el);
+
+    const scrambleCount = 3; // random chars shown per letter before it settles
+    const charDelay = 50; // ms per random char flip
+    const settled: string[] = [...current]; // start from current display
+    let cancelled = false;
+
+    (el as any)._scrambleCancel?.();
+    (el as any)._scrambleCancel = () => { cancelled = true; };
+
+    async function run() {
+      if (reverse) {
+        // Phase 1: scramble then remove trailing chars R→L
+        for (let i = settled.length - 1; i >= target.length && !cancelled; i--) {
+          for (let s = 0; s < scrambleCount && !cancelled; s++) {
+            settled[i] = chars[Math.floor(Math.random() * chars.length)];
+            setText(el, settled.join(""));
+            await delay(charDelay);
+          }
+          settled.pop();
+          setText(el, settled.join(""));
+        }
+        // Phase 2: settle remaining chars R→L
+        for (let i = target.length - 1; i >= 0 && !cancelled; i--) {
+          for (let s = 0; s < scrambleCount && !cancelled; s++) {
+            settled[i] = chars[Math.floor(Math.random() * chars.length)];
+            setText(el, settled.join(""));
+            await delay(charDelay);
+          }
+          settled[i] = target[i];
+          setText(el, settled.join(""));
+        }
+      } else {
+        // Phase 1: settle existing chars L→R
+        const minLen = Math.min(current.length, target.length);
+        for (let i = 0; i < minLen && !cancelled; i++) {
+          for (let s = 0; s < scrambleCount && !cancelled; s++) {
+            settled[i] = chars[Math.floor(Math.random() * chars.length)];
+            setText(el, settled.join(""));
+            await delay(charDelay);
+          }
+          settled[i] = target[i];
+          setText(el, settled.join(""));
+        }
+        // Phase 2: grow length L→R (add new chars one at a time)
+        for (let i = minLen; i < target.length && !cancelled; i++) {
+          for (let s = 0; s < scrambleCount && !cancelled; s++) {
+            settled[i] = chars[Math.floor(Math.random() * chars.length)];
+            setText(el, settled.join(""));
+            await delay(charDelay);
+          }
+          settled[i] = target[i];
+          setText(el, settled.join(""));
+        }
+      }
+
+      if (!cancelled) setText(el, target);
+    }
+
+    run();
+  }
+
+  function delay(ms: number) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll<HTMLElement>("[data-short][data-full]").forEach((el) => {
+    const short = el.dataset.short!;
+    const full = el.dataset.full!;
+    const parent = el.closest("div")!;
+
+    if (prefersReducedMotion) {
+      parent.addEventListener("mouseenter", () => setText(el, full));
+      parent.addEventListener("mouseleave", () => setText(el, short));
+    } else {
+      parent.addEventListener("mouseenter", () => scramble(el, full));
+      parent.addEventListener("mouseleave", () => scramble(el, short, true));
+    }
+  });
+</script>

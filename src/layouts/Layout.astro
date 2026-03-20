@@ -16,7 +16,10 @@ import "../styles/global.css";
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<slot />
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-neutral-800 focus:text-neutral-100 focus:font-sans">Skip to content</a>
+		<main id="main-content">
+			<slot />
+		</main>
 		<script src="https://kit.fontawesome.com/1aad4926f4.js" crossorigin="anonymous"></script>
 	</body>
 </html>

@@ -23,8 +23,9 @@ const { class: className } = Astro.props;
     aria-label="Copy code"
     square
   >
-    <i class="fa-solid fa-copy text-lg"></i>
+    <i class="fa-solid fa-copy text-lg" aria-hidden="true"></i>
   </Button>
+  <span class="sr-only" data-codeblock-status aria-live="polite"></span>
   <pre class="font-mono p-6 pr-10 overflow-x-auto text-success-500"><code><slot /></code></pre>
 </div>
 
@@ -40,8 +41,13 @@ const { class: className } = Astro.props;
       btn.addEventListener("click", () => {
         navigator.clipboard.writeText(code.textContent || "");
         const icon = btn.querySelector("i")!;
+        const status = block.querySelector<HTMLElement>("[data-codeblock-status]")!;
         icon.classList.replace("fa-copy", "fa-check");
-        setTimeout(() => icon.classList.replace("fa-check", "fa-copy"), 1500);
+        status.textContent = "Copied to clipboard";
+        setTimeout(() => {
+          icon.classList.replace("fa-check", "fa-copy");
+          status.textContent = "";
+        }, 1500);
       });
     });
 </script>

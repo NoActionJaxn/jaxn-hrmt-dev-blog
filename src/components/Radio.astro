@@ -20,8 +20,8 @@ const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefi
       class="peer sr-only"
       {...rest}
     />
-    <span class="w-6 h-6 rounded-full border-[2.5px] border-neutral-800 bg-neutral-100 peer-focus-visible:ring-2 peer-focus-visible:ring-accent-500 peer-focus-visible:ring-offset-1" />
-    <span class="absolute w-3 h-3 rounded-full bg-neutral-800 scale-0 peer-checked:scale-100" />
+    <span class="w-6 h-6 rounded-full border-[2.5px] border-neutral-800 bg-neutral-100 peer-focus-visible:ring-2 peer-focus-visible:ring-accent-500 peer-focus-visible:ring-offset-1" aria-hidden="true" />
+    <span class="absolute w-3 h-3 rounded-full bg-neutral-800 scale-0 peer-checked:scale-100" aria-hidden="true" />
   </span>
   {label && (
     <Text as="span" class="select-none">{label}</Text>
