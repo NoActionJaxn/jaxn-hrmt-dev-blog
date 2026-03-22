@@ -28,82 +28,97 @@ let fullTitle = "jackson hermitt";
 </style>
 
 <script>
-  import {gsap} from "gsap";
-
   const chars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~0123456789";
+
+  interface CursorState {
+    cursorPos: number;
+  }
 
   function setText(el: HTMLElement, text: string) {
     el.textContent = text;
     el.dataset.text = text;
   }
 
-  function scramble(el: HTMLElement, target: string, reverse = false) {
-    const current = el.textContent || "";
-
-    gsap.killTweensOf(el);
-
-    const scrambleCount = 3; // random chars shown per letter before it settles
-    const charDelay = 50; // ms per random char flip
-    const settled: string[] = [...current]; // start from current display
-    let cancelled = false;
-
-    (el as any)._scrambleCancel?.();
-    (el as any)._scrambleCancel = () => { cancelled = true; };
-
-    async function run() {
-      if (reverse) {
-        // Phase 1: scramble then remove trailing chars R→L
-        for (let i = settled.length - 1; i >= target.length && !cancelled; i--) {
-          for (let s = 0; s < scrambleCount && !cancelled; s++) {
-            settled[i] = chars[Math.floor(Math.random() * chars.length)];
-            setText(el, settled.join(""));
-            await delay(charDelay);
-          }
-          settled.pop();
-          setText(el, settled.join(""));
-        }
-        // Phase 2: settle remaining chars R→L
-        for (let i = target.length - 1; i >= 0 && !cancelled; i--) {
-          for (let s = 0; s < scrambleCount && !cancelled; s++) {
-            settled[i] = chars[Math.floor(Math.random() * chars.length)];
-            setText(el, settled.join(""));
-            await delay(charDelay);
-          }
-          settled[i] = target[i];
-          setText(el, settled.join(""));
-        }
-      } else {
-        // Phase 1: settle existing chars L→R
-        const minLen = Math.min(current.length, target.length);
-        for (let i = 0; i < minLen && !cancelled; i++) {
-          for (let s = 0; s < scrambleCount && !cancelled; s++) {
-            settled[i] = chars[Math.floor(Math.random() * chars.length)];
-            setText(el, settled.join(""));
-            await delay(charDelay);
-          }
-          settled[i] = target[i];
-          setText(el, settled.join(""));
-        }
-        // Phase 2: grow length L→R (add new chars one at a time)
-        for (let i = minLen; i < target.length && !cancelled; i++) {
-          for (let s = 0; s < scrambleCount && !cancelled; s++) {
-            settled[i] = chars[Math.floor(Math.random() * chars.length)];
-            setText(el, settled.join(""));
-            await delay(charDelay);
-          }
-          settled[i] = target[i];
-          setText(el, settled.join(""));
-        }
-      }
-
-      if (!cancelled) setText(el, target);
-    }
-
-    run();
+  function randomChar(): string {
+    return chars[Math.floor(Math.random() * chars.length)];
   }
 
   function delay(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
+  }
+
+  function getState(el: HTMLElement): CursorState {
+    let state = (el as any)._cursorState as CursorState | undefined;
+    if (!state) {
+      state = { cursorPos: 0 };
+      (el as any)._cursorState = state;
+    }
+    return state;
+  }
+
+  function animateCursor(
+    el: HTMLElement,
+    short: string,
+    full: string,
+    direction: "forward" | "backward",
+  ) {
+    // cancel any running animation
+    (el as any)._cancelAnim?.();
+
+    const state = getState(el);
+    const scrambleCount = 3;
+    const charDelay = 50;
+    const maxLen = full.length;
+    let cancelled = false;
+
+    // store cancel handle for next invocation
+    (el as any)._cancelAnim = () => { cancelled = true; };
+
+    const settled: string[] = [...(el.textContent || "")];
+
+    async function forward() {
+      while (state.cursorPos < maxLen && !cancelled) {
+        const i = state.cursorPos;
+        for (let s = 0; s < scrambleCount && !cancelled; s++) {
+          if (i >= settled.length) settled.push(randomChar());
+          else settled[i] = randomChar();
+          setText(el, settled.join(""));
+          await delay(charDelay);
+        }
+        if (cancelled) break;
+        if (i >= settled.length) settled.push(full[i]);
+        else settled[i] = full[i];
+        state.cursorPos = i + 1;
+        setText(el, settled.join(""));
+      }
+      if (!cancelled) setText(el, full);
+    }
+
+    async function backward() {
+      while (state.cursorPos > 0 && !cancelled) {
+        const i = state.cursorPos - 1;
+        for (let s = 0; s < scrambleCount && !cancelled; s++) {
+          settled[i] = randomChar();
+          setText(el, settled.join(""));
+          await delay(charDelay);
+        }
+        if (cancelled) break;
+        if (i >= short.length) {
+          settled.pop();
+        } else {
+          settled[i] = short[i];
+        }
+        state.cursorPos = i;
+        setText(el, settled.join(""));
+      }
+      if (!cancelled) setText(el, short);
+    }
+
+    if (direction === "forward") {
+      forward();
+    } else {
+      backward();
+    }
   }
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -117,8 +132,8 @@ let fullTitle = "jackson hermitt";
       parent.addEventListener("mouseenter", () => setText(el, full));
       parent.addEventListener("mouseleave", () => setText(el, short));
     } else {
-      parent.addEventListener("mouseenter", () => scramble(el, full));
-      parent.addEventListener("mouseleave", () => scramble(el, short, true));
+      parent.addEventListener("mouseenter", () => animateCursor(el, short, full, "forward"));
+      parent.addEventListener("mouseleave", () => animateCursor(el, short, full, "backward"));
     }
   });
 </script>
