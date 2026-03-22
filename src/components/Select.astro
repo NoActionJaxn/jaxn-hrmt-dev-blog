@@ -14,6 +14,7 @@ interface Props {
   options: Option[];
   placeholder?: string;
   name?: string;
+  required?: boolean;
   class?: string;
 }
 
@@ -23,6 +24,7 @@ const {
   options,
   placeholder = "Choose...",
   name,
+  required = false,
   class: className,
 } = Astro.props;
 
@@ -45,7 +47,7 @@ const triggerClasses = classNames(
       {label}
     </label>
   )}
-  <input type="hidden" name={name} data-select-value />
+  <input type="hidden" name={name} required={required} data-select-value />
   <div class="relative" data-select-wrapper>
     <button
       type="button"
@@ -65,16 +67,6 @@ const triggerClasses = classNames(
       id={menuId}
       role="listbox"
     >
-      <li
-        class="px-3 py-2 font-sans text-neutral-400 cursor-pointer hover:bg-neutral-200"
-        data-select-option
-        data-value=""
-        id={`${menuId}-opt-placeholder`}
-        role="option"
-        aria-selected="false"
-      >
-        {placeholder}
-      </li>
       {options.map((opt, i) => (
         <li
           class="px-3 py-2 font-sans text-neutral-800 cursor-pointer hover:bg-neutral-200"
