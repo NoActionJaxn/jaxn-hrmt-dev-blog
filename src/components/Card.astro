@@ -10,6 +10,7 @@ interface Props {
   image?: string;
   imageWidth?: number;
   imageHeight?: number;
+  loading?: "lazy" | "eager";
   title: string;
   description: string;
   href: string;
@@ -21,6 +22,7 @@ const {
   image,
   imageWidth,
   imageHeight,
+  loading = "lazy",
   title,
   description,
   href,
@@ -36,6 +38,7 @@ const {
       alt={title}
       width={imageWidth}
       height={imageHeight}
+      loading={loading}
       class="w-full aspect-video shrink-0"
     />
     <div class="p-3 flex flex-col gap-4 min-h-0">
