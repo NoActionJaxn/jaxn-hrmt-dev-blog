@@ -5,11 +5,11 @@ import Button from "./Button.astro";
 import Accent from "./Accent.astro";
 
 interface Props {
-  asideTitle?: string;
-  asideDescription?: string;
+  title?: string;
+  description?: string;
 }
 
-const { asideTitle, asideDescription } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <main
@@ -20,9 +20,9 @@ const { asideTitle, asideDescription } = Astro.props;
     class="fixed left-8 top-28 bottom-0 flex flex-col justify-between py-8 w-18 z-30"
   >
     <div class="w-64 origin-top-left rotate-90 translate-x-18 -space-y-2">
-      <Header size="xs">{asideTitle}</Header>
-      <Text as="span" size="xs">
-        {asideDescription}
+      <Header size="xs" class="select-none">{title}</Header>
+      <Text as="span" size="xs" class="select-none">
+        {description}
       </Text>
     </div>
     <Button

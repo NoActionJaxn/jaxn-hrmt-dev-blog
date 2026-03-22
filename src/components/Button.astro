@@ -54,10 +54,22 @@ const classes = classNames(baseClasses, variantClasses, sizeClasses, shapeClasse
 
 {
   asChild ? (
-    <slot />
+    <span data-button-as-child={classes} style="display:contents">
+      <slot />
+    </span>
   ) : (
     <Tag type={type} class={classes} {...rest}>
       <slot />
     </Tag>
   )
 }
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-button-as-child]").forEach((wrapper) => {
+    const child = wrapper.firstElementChild as HTMLElement | null;
+    if (!child) return;
+    const buttonClasses = wrapper.dataset.buttonAsChild ?? "";
+    buttonClasses.split(" ").filter(Boolean).forEach((cls) => child.classList.add(cls));
+    wrapper.replaceWith(...wrapper.childNodes);
+  });
+</script>

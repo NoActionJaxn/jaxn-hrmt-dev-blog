@@ -6,83 +6,81 @@ import TextInput from "../components/TextInput.astro";
 import TextArea from "../components/TextArea.astro";
 import Select from "../components/Select.astro";
 import Button from "../components/Button.astro";
+import GridBox from "../components/GridBox.astro";
 ---
 
-<Layout
-	pageTitle="Contact | Jaxn's Dev Blog"
-	asideTitle="Contact"
->
-	<div class="flex flex-col gap-y-6 gap-x-4 p-4">
-		<div class="space-y-2">
-			<Header variant="h2" size="xl">Lorem ipsum dolor sit amet.</Header>
-			<Text>
-				Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
-				ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
-				tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
-				Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
-				massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
-				vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
-				inceptos himenaeos.
-			</Text>
-		</div>
-		<div class="pt-8">
-			<form>
-				<div class="grid grid-cols-2 gap-4">
-					<div>
-						<TextInput
-							label="First Name"
-							name="firstName"
-							placeholder="Enter your first name"
-							required
-						/>
-					</div>
-					<div>
-						<TextInput
-							label="Last Name"
-							name="lastName"
-							placeholder="Enter your last name"
-							required
-						/>
-					</div>
-					<div class="col-span-2">
-						<TextInput
-							label="Email"
-							type="email"
-							name="email"
-							placeholder="Enter your email address"
-							required
-						/>
-					</div>
-					<div class="col-span-2">
-						<Select
-							label="Purpose of Contact"
-							name="purpose"
-							placeholder="Select an option"
-							options={[
-								{ label: "General Inquiry", value: "general" },
-								{ label: "Freelance / Contract Work", value: "freelance" },
-								{ label: "Collaboration", value: "collaboration" },
-								{ label: "Bug Report / Issue", value: "bug" },
-								{ label: "Feedback", value: "feedback" },
-								{ label: "Other", value: "other" },
-							]}
-							required
-						/>
-					</div>
-					<div class="col-span-2">
-						<TextArea
-							label="Message"
-							name="message"
-							placeholder="Enter your message"
-							required
-						/>
-					</div>
-					<div class="col-span-2 flex gap-2 justify-end">
-						<Button type="submit">Submit</Button>
-						<Button type="reset" variant="outline" class="ml-2">Reset</Button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+<Layout pageTitle="Contact | Jaxn's Dev Blog" asideTitle="Contact">
+  <div class="flex flex-col gap-y-6 gap-x-4 p-4">
+    <div class="space-y-2">
+      <Header variant="h2" size="xl">Lorem ipsum dolor sit amet.</Header>
+      <Text>
+        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
+        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
+        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
+        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
+        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
+        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
+        inceptos himenaeos.
+      </Text>
+    </div>
+    <div class="pt-8">
+      <form>
+        <GridBox columns={2} gap={4}>
+          <div>
+            <TextInput
+              label="First Name"
+              name="firstName"
+              placeholder="Enter your first name"
+              required
+            />
+          </div>
+          <div>
+            <TextInput
+              label="Last Name"
+              name="lastName"
+              placeholder="Enter your last name"
+              required
+            />
+          </div>
+          <div class="col-span-2">
+            <TextInput
+              label="Email"
+              type="email"
+              name="email"
+              placeholder="Enter your email address"
+              required
+            />
+          </div>
+          <div class="col-span-2">
+            <Select
+              label="Purpose of Contact"
+              name="purpose"
+              placeholder="Select an option"
+              options={[
+                { label: "General Inquiry", value: "general" },
+                { label: "Freelance / Contract Work", value: "freelance" },
+                { label: "Collaboration", value: "collaboration" },
+                { label: "Bug Report / Issue", value: "bug" },
+                { label: "Feedback", value: "feedback" },
+                { label: "Other", value: "other" },
+              ]}
+              required
+            />
+          </div>
+          <div class="col-span-2">
+            <TextArea
+              label="Message"
+              name="message"
+              placeholder="Enter your message"
+              required
+            />
+          </div>
+          <div class="col-span-2 flex gap-2 justify-end">
+            <Button type="submit">Submit</Button>
+            <Button type="reset" variant="outline" class="ml-2">Reset</Button>
+          </div>
+        </GridBox>
+      </form>
+    </div>
+  </div>
 </Layout>
