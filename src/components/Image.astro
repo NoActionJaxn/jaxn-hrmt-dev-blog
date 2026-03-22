@@ -1,8 +1,10 @@
 ---
 import classNames from "classnames";
+import { Image as AstroImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 
 interface Props {
-  src?: string;
+  src?: ImageMetadata | string;
   alt?: string;
   width?: number;
   height?: number;
@@ -11,18 +13,20 @@ interface Props {
 }
 
 const { src, alt = "", width, height, loading = "lazy", class: className } = Astro.props;
+
+const imageProps = {
+  src: src!,
+  alt,
+  loading,
+  decoding: "async" as const,
+  class: classNames("object-cover", className),
+  ...(width != null && { width }),
+  ...(height != null && { height }),
+} as any;
 ---
 
 {src ? (
-  <img
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    loading={loading}
-    decoding="async"
-    class={classNames("object-cover", className)}
-  />
+  <AstroImage {...imageProps} />
 ) : (
   <div
     role="img"

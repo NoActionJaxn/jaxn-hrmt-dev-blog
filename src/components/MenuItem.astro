@@ -9,7 +9,7 @@ const { index, label, href } = Astro.props;
 ---
 
 <li>
-  <a href={href} class="group flex text-neutral-100 text-4xl gap-0.5">
+  <a href={href} class="group flex text-neutral-100 text-4xl gap-2">
     <span>{index.toString().padStart(2, "0")}</span>
     <span class="flex grow pb-2">
       <span class="grow border-b-2 border-dotted border-neutral-100" />

@@ -1,11 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
+import Image from "../components/Image.astro";
+import Quote from "../components/Quote.astro";
 ---
 
-<Layout
-	pageTitle="Index | Jaxn's Dev Blog"
-	asideTitle="Index"
->
-	<Header variant="h2">Home</Header>
+<Layout pageTitle="Index | Jaxn's Dev Blog" asideTitle="Index">
+	<Image class="aspect-square" />
+	<Quote>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</Quote>
 </Layout>
