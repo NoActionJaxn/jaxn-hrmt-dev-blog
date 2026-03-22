@@ -3,16 +3,21 @@ let title = "jaxn hrmt";
 let fullTitle = "jackson hermitt";
 ---
 
-<div class="p-4 text-5xl inline-block select-none cursor-pointer" aria-label="jackson hermitt">
-  <span
-    class="font-accent text-accent-500 relative inline-block whitespace-nowrap"
-    style="-webkit-text-stroke: 4px var(--color-accent-900); paint-order: stroke fill;"
-    data-text={title}
-    data-short={title}
-    data-full={fullTitle}
-    aria-hidden="true">{title}</span
+<a href="/">
+  <div
+    class="p-4 text-5xl inline-block select-none cursor-pointer"
+    aria-label="jackson hermitt"
   >
-</div>
+    <span
+      class="font-accent text-accent-500 relative inline-block whitespace-nowrap"
+      style="-webkit-text-stroke: 4px var(--color-accent-900); paint-order: stroke fill;"
+      data-text={title}
+      data-short={title}
+      data-full={fullTitle}
+      aria-hidden="true">{title}</span
+    >
+  </div>
+</a>
 
 <style>
   [data-text]::after {
@@ -72,7 +77,9 @@ let fullTitle = "jackson hermitt";
     let cancelled = false;
 
     // store cancel handle for next invocation
-    (el as any)._cancelAnim = () => { cancelled = true; };
+    (el as any)._cancelAnim = () => {
+      cancelled = true;
+    };
 
     const settled: string[] = [...(el.textContent || "")];
 
@@ -121,19 +128,29 @@ let fullTitle = "jackson hermitt";
     }
   }
 
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
 
-  document.querySelectorAll<HTMLElement>("[data-short][data-full]").forEach((el) => {
-    const short = el.dataset.short!;
-    const full = el.dataset.full!;
-    const parent = el.closest("div")!;
+  document.addEventListener("astro:page-load", () => {
+    document
+      .querySelectorAll<HTMLElement>("[data-short][data-full]")
+      .forEach((el) => {
+        const short = el.dataset.short!;
+        const full = el.dataset.full!;
+        const parent = el.closest("div")!;
 
-    if (prefersReducedMotion) {
-      parent.addEventListener("mouseenter", () => setText(el, full));
-      parent.addEventListener("mouseleave", () => setText(el, short));
-    } else {
-      parent.addEventListener("mouseenter", () => animateCursor(el, short, full, "forward"));
-      parent.addEventListener("mouseleave", () => animateCursor(el, short, full, "backward"));
-    }
+        if (prefersReducedMotion) {
+          parent.addEventListener("mouseenter", () => setText(el, full));
+          parent.addEventListener("mouseleave", () => setText(el, short));
+        } else {
+          parent.addEventListener("mouseenter", () =>
+            animateCursor(el, short, full, "forward"),
+          );
+          parent.addEventListener("mouseleave", () =>
+            animateCursor(el, short, full, "backward"),
+          );
+        }
+      });
   });
 </script>

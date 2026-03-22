@@ -31,8 +31,8 @@ import SOCIALS from "../constants/socials";
         <ul class="space-x-2">
           {SOCIALS.map((social) => (
             <li class="inline">
-              <a href={social.href} class="text-neutral-100 text-3xl transition-colors hover:text-success-500 active:text-accent-500">
-                <i class={social.icon} aria-hidden="true"></i>
+              <a href={social.href} target="_blank" referrerpolicy="no-referrer" class="text-neutral-100 text-3xl transition-colors hover:text-success-500 active:text-accent-500">
+                <i class={social.icon} ></i>
                 <span class="sr-only">{social.name}</span>
               </a>
             </li>
@@ -46,22 +46,44 @@ import SOCIALS from "../constants/socials";
 <script>
   import { isMenuOpen } from "../stores/menuStore";
 
-  const menu = document.getElementById("page-menu");
-  const header = document.getElementById("page-header");
-  const wrapper = document.getElementById("page-wrapper");
+  let unsub: (() => void) | null = null;
 
-  isMenuOpen.subscribe((open) => {
-    if (!menu) return;
-    if (open) {
+  document.addEventListener("astro:page-load", () => {
+    if (unsub) unsub();
+
+    const menu = document.getElementById("page-menu");
+    const header = document.getElementById("page-header");
+    const wrapper = document.getElementById("page-wrapper");
+
+    // Apply stored state instantly on load (no transition flash)
+    if (isMenuOpen.get() && menu) {
+      menu.style.transitionDuration = "0s";
       menu.classList.remove("translate-x-full");
       menu.classList.add("translate-x-0");
-      if (header) header.style.right = "50vw";
-      if (wrapper) wrapper.style.marginRight = "50vw";
-    } else {
-      menu.classList.remove("translate-x-0");
-      menu.classList.add("translate-x-full");
-      if (header) header.style.right = "0";
-      if (wrapper) wrapper.style.marginRight = "0";
+      if (header) { header.style.transitionDuration = "0s"; header.style.right = "50vw"; }
+      if (wrapper) { wrapper.style.transitionDuration = "0s"; wrapper.style.marginRight = "50vw"; }
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          menu!.style.transitionDuration = "";
+          if (header) header.style.transitionDuration = "";
+          if (wrapper) wrapper.style.transitionDuration = "";
+        });
+      });
     }
+
+    unsub = isMenuOpen.subscribe((open) => {
+      if (!menu) return;
+      if (open) {
+        menu.classList.remove("translate-x-full");
+        menu.classList.add("translate-x-0");
+        if (header) header.style.right = "50vw";
+        if (wrapper) wrapper.style.marginRight = "50vw";
+      } else {
+        menu.classList.remove("translate-x-0");
+        menu.classList.add("translate-x-full");
+        if (header) header.style.right = "0";
+        if (wrapper) wrapper.style.marginRight = "0";
+      }
+    });
   });
 </script>

@@ -9,29 +9,42 @@ interface Props {
   asideDescription?: string;
 }
 
-const {
-  asideTitle = "Untitled",
-  asideDescription = "No description available",
-} = Astro.props;
+const { asideTitle, asideDescription } = Astro.props;
 ---
 
 <main
   id="page-wrapper"
   class="pt-28 px-8 gap-8 min-h-screen flex flex-row transition-all duration-300 ease-in-out"
 >
-  <aside class="fixed left-8 top-28 bottom-0 flex flex-col justify-between py-8 w-18 z-30">
+  <aside
+    class="fixed left-8 top-28 bottom-0 flex flex-col justify-between py-8 w-18 z-30"
+  >
     <div class="w-64 origin-top-left rotate-90 translate-x-18 -space-y-2">
       <Header size="xs">{asideTitle}</Header>
       <Text as="span" size="xs">
         {asideDescription}
       </Text>
     </div>
-    <Button class="flex-col gap-2 h-auto py-4 px-0!" variant="ghost">
+    <Button
+      class="flex-col gap-2 h-auto py-4 px-0!"
+      variant="ghost"
+      data-back-to-top
+    >
       <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
       <Accent class="text-neutral-800 text-[10px]">Back to Top</Accent>
     </Button>
   </aside>
-  <div class="container mx-auto grow pl-24">
+  <div class="container mx-auto grow pl-24 pb-8">
     <slot />
   </div>
 </main>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    document
+      .querySelector("[data-back-to-top]")
+      ?.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+  });
+</script>

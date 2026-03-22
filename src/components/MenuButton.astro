@@ -48,34 +48,61 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
 <script>
   import { toggleMenu, isMenuOpen } from "../stores/menuStore";
 
-  const btn = document.querySelector("[data-menu-toggle]");
-  btn?.addEventListener("click", () => {
-    toggleMenu();
-  });
+  let unsub: (() => void) | null = null;
 
-  isMenuOpen.subscribe((open) => {
+  document.addEventListener("astro:page-load", () => {
+    if (unsub) unsub();
+
+    const btn = document.querySelector("[data-menu-toggle]");
     if (!btn) return;
-    btn.setAttribute("aria-expanded", String(open));
-    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
 
-    const lines = btn.querySelectorAll("span > span");
-    if (lines.length < 3) return;
-    const [top, mid, bot] = lines;
+    btn.addEventListener("click", () => {
+      toggleMenu();
+    });
 
-    if (open) {
-      top.className = top.className
-        .replace("top-0", "top-1/2 -translate-y-1/2 rotate-45");
-      mid.className = mid.className
-        .replace("opacity-100", "opacity-0");
-      bot.className = bot.className
-        .replace("bottom-0", "top-1/2 -translate-y-1/2 -rotate-45");
-    } else {
-      top.className = top.className
-        .replace("top-1/2 -translate-y-1/2 rotate-45", "top-0");
-      mid.className = mid.className
-        .replace("opacity-0", "opacity-100");
-      bot.className = bot.className
-        .replace("top-1/2 -translate-y-1/2 -rotate-45", "bottom-0");
+    function applyState(open: boolean, animate: boolean) {
+      btn!.setAttribute("aria-expanded", String(open));
+      btn!.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+
+      const lines = btn!.querySelectorAll("span > span");
+      if (lines.length < 3) return;
+      const [top, mid, bot] = lines;
+
+      if (!animate) {
+        (lines as NodeListOf<HTMLElement>).forEach((l) => l.style.transitionDuration = "0s");
+      }
+
+      if (open) {
+        top.className = top.className
+          .replace("top-0", "top-1/2 -translate-y-1/2 rotate-45");
+        mid.className = mid.className
+          .replace("opacity-100", "opacity-0");
+        bot.className = bot.className
+          .replace("bottom-0", "top-1/2 -translate-y-1/2 -rotate-45");
+      } else {
+        top.className = top.className
+          .replace("top-1/2 -translate-y-1/2 rotate-45", "top-0");
+        mid.className = mid.className
+          .replace("opacity-0", "opacity-100");
+        bot.className = bot.className
+          .replace("top-1/2 -translate-y-1/2 -rotate-45", "bottom-0");
+      }
+
+      if (!animate) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            (lines as NodeListOf<HTMLElement>).forEach((l) => l.style.transitionDuration = "");
+          });
+        });
+      }
     }
+
+    // Instant apply on first load
+    applyState(isMenuOpen.get(), false);
+
+    // Animate on subsequent toggles
+    unsub = isMenuOpen.subscribe((open) => {
+      applyState(open, true);
+    });
   });
 </script>

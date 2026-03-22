@@ -1,8 +1,33 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import PageWrapper from "../components/PageWrapper.astro";
 import PageHeader from "../components/PageHeader.astro";
 import PageMenu from "../components/PageMenu.astro";
 import "../styles/global.css";
+
+interface Props {
+	pageTitle?: string;
+	pageDescription?: string;
+	asideTitle?: string;
+	asideDescription?: string;
+	metaAuthor?: string;
+	metaKeywords?: string[];
+	metaImage?: string;
+	metaUrl?: string;
+	metaType?: string;
+}
+
+const {
+	pageTitle = "jaxn-hrmt",
+	pageDescription = "No description available",
+	asideTitle = "Page",
+	asideDescription = "development portfolio",
+	metaAuthor = "Jackson Hermitt",
+	metaKeywords = [],
+	metaImage = "",
+	metaUrl = Astro.url.href,
+	metaType = "website",
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -19,7 +44,36 @@ import "../styles/global.css";
 			rel="stylesheet"
 		/>
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="description" content={pageDescription} />
+		<meta name="author" content={metaAuthor} />
+		{metaKeywords && <meta name="keywords" content={metaKeywords.join(", ")} />}
+		<meta name="robots" content="index, follow" />
+		<link rel="canonical" href={metaUrl} />
+
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={pageDescription} />
+		<meta property="og:type" content={metaType} />
+		<meta property="og:url" content={metaUrl} />
+		{metaImage && <meta property="og:image" content={metaImage} />}
+
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": metaType === "article" ? "Article" : "WebPage",
+				name: pageTitle,
+				description: pageDescription,
+				url: metaUrl,
+				...(metaImage && { image: metaImage }),
+				...(metaType === "article" && {
+					author: { "@type": "Person", name: metaAuthor },
+					...(metaKeywords.length > 0 && { keywords: metaKeywords.join(", ") }),
+				}),
+			})}
+		/>
+
+		<title>{pageTitle}</title>
+		<ClientRouter />
 	</head>
 	<body>
 		<a
@@ -29,7 +83,7 @@ import "../styles/global.css";
 		>
 		<PageHeader />
 		<PageMenu />
-		<PageWrapper>
+		<PageWrapper asideTitle={asideTitle} asideDescription={asideDescription}>
 			<slot />
 		</PageWrapper>
 		<script
