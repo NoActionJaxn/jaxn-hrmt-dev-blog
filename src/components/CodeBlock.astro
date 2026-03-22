@@ -30,24 +30,32 @@ const { class: className } = Astro.props;
 </div>
 
 <script>
-  document
-    .querySelectorAll<HTMLElement>("[data-codeblock]")
-    .forEach((block) => {
-      const btn = block.querySelector<HTMLButtonElement>(
-        "[data-codeblock-copy]",
-      )!;
-      const code = block.querySelector("code")!;
+  function initCodeBlocks() {
+    document
+      .querySelectorAll<HTMLElement>("[data-codeblock]")
+      .forEach((block) => {
+        if (block.dataset.codeblockInitialized) return;
+        block.dataset.codeblockInitialized = "true";
 
-      btn.addEventListener("click", () => {
-        navigator.clipboard.writeText(code.textContent || "");
-        const icon = btn.querySelector("i")!;
-        const status = block.querySelector<HTMLElement>("[data-codeblock-status]")!;
-        icon.classList.replace("fa-copy", "fa-check");
-        status.textContent = "Copied to clipboard";
-        setTimeout(() => {
-          icon.classList.replace("fa-check", "fa-copy");
-          status.textContent = "";
-        }, 1500);
+        const btn = block.querySelector<HTMLButtonElement>(
+          "[data-codeblock-copy]",
+        )!;
+        const code = block.querySelector("code")!;
+
+        btn.addEventListener("click", () => {
+          navigator.clipboard.writeText(code.textContent || "");
+          const icon = btn.querySelector("i")!;
+          const status = block.querySelector<HTMLElement>("[data-codeblock-status]")!;
+          icon.classList.replace("fa-copy", "fa-check");
+          status.textContent = "Copied to clipboard";
+          setTimeout(() => {
+            icon.classList.replace("fa-check", "fa-copy");
+            status.textContent = "";
+          }, 1500);
+        });
       });
-    });
+  }
+
+  initCodeBlocks();
+  document.addEventListener("astro:page-load", initCodeBlocks);
 </script>

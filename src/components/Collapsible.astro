@@ -63,23 +63,31 @@ const panelId = `collapsible-${Math.random().toString(36).slice(2, 8)}`;
     trigger.setAttribute("aria-expanded", "true");
   }
 
-  document.querySelectorAll<HTMLElement>("[data-collapsible]").forEach((root) => {
-    const trigger = root.querySelector<HTMLButtonElement>("[data-collapsible-trigger]")!;
+  function initCollapsibles() {
+    document.querySelectorAll<HTMLElement>("[data-collapsible]").forEach((root) => {
+      if (root.dataset.collapsibleInitialized) return;
+      root.dataset.collapsibleInitialized = "true";
 
-    trigger.addEventListener("click", () => {
-      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+      const trigger = root.querySelector<HTMLButtonElement>("[data-collapsible-trigger]")!;
 
-      if (isOpen) {
-        collapseItem(root);
-      } else {
-        const group = root.closest<HTMLElement>("[data-collapsible-group]");
-        if (group?.dataset.accordion === "true") {
-          group.querySelectorAll<HTMLElement>(":scope > [data-collapsible]").forEach((sibling) => {
-            if (sibling !== root) collapseItem(sibling);
-          });
+      trigger.addEventListener("click", () => {
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+        if (isOpen) {
+          collapseItem(root);
+        } else {
+          const group = root.closest<HTMLElement>("[data-collapsible-group]");
+          if (group?.dataset.accordion === "true") {
+            group.querySelectorAll<HTMLElement>(":scope > [data-collapsible]").forEach((sibling) => {
+              if (sibling !== root) collapseItem(sibling);
+            });
+          }
+          expandItem(root);
         }
-        expandItem(root);
-      }
+      });
     });
-  });
+  }
+
+  initCollapsibles();
+  document.addEventListener("astro:page-load", initCollapsibles);
 </script>

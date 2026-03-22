@@ -35,6 +35,7 @@ const columnClasses: Record<number, string> = {
 <div
   class={classNames("grid", gapClasses[gap], columnClasses[columns], className)}
   data-grid-columns={columns}
+  data-grid-col-classes={columnClasses[columns]}
   {...rest}
 >
   <slot />
@@ -45,13 +46,11 @@ const columnClasses: Record<number, string> = {
 
   function applyMenuState(open: boolean) {
     document.querySelectorAll<HTMLElement>("[data-grid-columns]").forEach((el) => {
+      const colClasses = (el.dataset.gridColClasses ?? "").split(" ").filter(Boolean);
+
       if (open) {
         el.dataset.menuCollapsed = "true";
-        el.classList.remove(
-          "sm:grid-cols-2",
-          "md:grid-cols-3",
-          "lg:grid-cols-4"
-        );
+        colClasses.forEach((cls) => el.classList.remove(cls));
         el.classList.add("grid-cols-1");
         el.querySelectorAll<HTMLElement>("[class*='col-span-']").forEach((child) => {
           const match = child.className.match(/col-span-(\d+)/);
@@ -64,10 +63,7 @@ const columnClasses: Record<number, string> = {
       } else {
         delete el.dataset.menuCollapsed;
         el.classList.remove("grid-cols-1");
-        const cols = Number(el.dataset.gridColumns) || 3;
-        if (cols >= 2) el.classList.add("sm:grid-cols-2");
-        if (cols >= 3) el.classList.add("md:grid-cols-3");
-        if (cols >= 4) el.classList.add("lg:grid-cols-4");
+        colClasses.forEach((cls) => el.classList.add(cls));
         el.querySelectorAll<HTMLElement>("[data-original-col-span]").forEach((child) => {
           child.classList.remove("col-span-1");
           child.classList.add(child.dataset.originalColSpan!);
