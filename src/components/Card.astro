@@ -24,7 +24,9 @@ const { image, title, description, href, tags = [], class: className } = Astro.p
     <div class="p-3 flex flex-col gap-2">
       <Header variant="h3" size="sm">{title}</Header>
       <Text as="p" class="line-clamp-4">{description}</Text>
-      <Button as="a" href={href} class="w-full mt-1" aria-label={`Read more about ${title}`}>Read More</Button>
+      <Button asChild class="w-full mt-1" aria-label={`Read more about ${title}`}>
+        <a href={href}>Read More</a>
+      </Button>
     </div>
   </div>
   {tags.length > 0 && (

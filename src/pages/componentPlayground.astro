@@ -21,6 +21,7 @@ import Code from "../components/Code.astro";
 import Layout from "../layouts/Layout.astro";
 import Logo from "../components/Logo.astro";
 import Quote from "../components/Quote.astro";
+import TagInput from "../components/TagInput.astro";
 ---
 
 <Layout>
@@ -204,6 +205,14 @@ import Quote from "../components/Quote.astro";
 		</div>
 		<div>
 			<Quote>Lorem ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing elit quisque faucibus.</Quote>
+		</div>
+		<div class="w-sm space-y-2">
+			<TagInput
+				label="Skills"
+				name="skills"
+				options={["JavaScript", "TypeScript", "React", "Astro", "CSS", "Tailwind", "Node.js", "Python", "Rust", "Go"]}
+				placeholder="Search skills..."
+			/>
 		</div>
 	</div>
 </Layout>

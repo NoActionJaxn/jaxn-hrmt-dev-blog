@@ -1,0 +1,284 @@
+---
+import classNames from "classnames";
+import Tag from "./Tag.astro";
+
+type Size = "sm" | "base" | "lg";
+
+interface Props {
+  size?: Size;
+  label?: string;
+  options?: string[];
+  placeholder?: string;
+  name?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const {
+  size = "base",
+  label,
+  options = [],
+  placeholder = "Type to search...",
+  name,
+  required = false,
+  class: className,
+} = Astro.props;
+
+const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
+
+const wrapperClasses = classNames(
+  "flex flex-wrap items-center gap-1.5 border-2 border-neutral-800 bg-neutral-100 px-2 py-1.5 focus-within:ring-2 focus-within:ring-accent-500",
+  {
+    "min-h-10 text-sm": size === "sm",
+    "min-h-10.5 text-base": size === "base",
+    "min-h-11 text-lg": size === "lg",
+  },
+);
+---
+
+<div class={classNames("relative", className)} data-tag-input data-options={JSON.stringify(options)}>
+  {label && (
+    <label for={inputId} class="block font-accent uppercase text-sm text-neutral-700 mb-1">
+      {label}
+    </label>
+  )}
+  <input type="hidden" name={name} required={required} data-tag-hidden />
+  <div class={wrapperClasses} data-tag-wrapper>
+    <input
+      type="text"
+      id={inputId}
+      class="flex-1 min-w-20 bg-transparent font-sans text-neutral-800 placeholder:text-neutral-400 focus:outline-none"
+      placeholder={placeholder}
+      autocomplete="off"
+      data-tag-text-input
+    />
+    <button
+      type="button"
+      class="hidden items-center justify-center text-neutral-500 hover:text-neutral-800 shrink-0 ml-auto cursor-pointer"
+      data-tag-clear
+      aria-label="Clear all tags"
+    >
+      <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
+    </button>
+  </div>
+  <ul
+    class="absolute left-0 right-0 top-full z-10 hidden max-h-48 overflow-y-auto border-2 border-t-0 border-neutral-800 bg-neutral-100"
+    data-tag-menu
+    role="listbox"
+  >
+  </ul>
+  <template data-tag-template>
+    <Tag size="sm" class="inline-flex items-center gap-1 cursor-default!" data-tag-chip>
+      <span data-tag-label></span><button type="button" class="ml-0.5 hover:text-accent-500 cursor-pointer" aria-label="Remove"><i class="fa-solid fa-xmark text-[10px]" aria-hidden="true"></i></button>
+    </Tag>
+  </template>
+</div>
+
+<script>
+  function initTagInputs() {
+    document.querySelectorAll<HTMLElement>("[data-tag-input]").forEach((root) => {
+      if (root.dataset.tagInitialized) return;
+      root.dataset.tagInitialized = "true";
+
+      const options: string[] = JSON.parse(root.dataset.options ?? "[]");
+      const wrapper = root.querySelector<HTMLElement>("[data-tag-wrapper]")!;
+      const textInput = root.querySelector<HTMLInputElement>("[data-tag-text-input]")!;
+      const hiddenInput = root.querySelector<HTMLInputElement>("[data-tag-hidden]")!;
+      const clearBtn = root.querySelector<HTMLButtonElement>("[data-tag-clear]")!;
+      const menu = root.querySelector<HTMLUListElement>("[data-tag-menu]")!;
+
+      const selected: string[] = [];
+      let activeIndex = -1;
+
+      function syncHidden() {
+        hiddenInput.value = selected.join(",");
+      }
+
+      const template = root.querySelector<HTMLTemplateElement>("[data-tag-template]")!;
+
+      function renderTags() {
+        wrapper.querySelectorAll("[data-tag-chip]").forEach((el) => el.remove());
+        selected.forEach((tag) => {
+          const clone = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+          clone.querySelector<HTMLElement>("[data-tag-label]")!.textContent = tag;
+          const removeBtn = clone.querySelector<HTMLButtonElement>("button")!;
+          removeBtn.dataset.tagRemove = tag;
+          removeBtn.setAttribute("aria-label", `Remove ${tag}`);
+          wrapper.insertBefore(clone, textInput);
+        });
+        clearBtn.classList.toggle("hidden", selected.length === 0);
+        clearBtn.classList.toggle("flex", selected.length > 0);
+        syncHidden();
+      }
+
+      function addTag(value: string) {
+        const trimmed = value.trim();
+        if (!trimmed || selected.includes(trimmed)) return;
+        selected.push(trimmed);
+        renderTags();
+        textInput.value = "";
+        renderMenu();
+      }
+
+      function removeTag(value: string) {
+        const idx = selected.indexOf(value);
+        if (idx >= 0) {
+          selected.splice(idx, 1);
+          renderTags();
+          renderMenu();
+        }
+      }
+
+      function getFiltered(): string[] {
+        const query = textInput.value.toLowerCase();
+        return options.filter(
+          (o) => o.toLowerCase().includes(query) && !selected.includes(o),
+        );
+      }
+
+      function renderMenu() {
+        const filtered = getFiltered();
+        menu.innerHTML = "";
+        activeIndex = -1;
+
+        if (textInput.value.trim() === "" && filtered.length === options.length - selected.length && filtered.length > 0) {
+          // Show nothing if input is empty and no filtering is happening — wait for typing
+        }
+
+        if (filtered.length === 0 && textInput.value.trim() !== "") {
+          const li = document.createElement("li");
+          li.className = "px-3 py-2 font-sans text-neutral-400 italic";
+          li.textContent = "No matching options";
+          menu.appendChild(li);
+          openMenu();
+          return;
+        }
+
+        if (textInput.value.trim() === "" && document.activeElement !== textInput) {
+          closeMenu();
+          return;
+        }
+
+        filtered.forEach((opt, i) => {
+          const li = document.createElement("li");
+          li.className =
+            "px-3 py-2 font-sans text-neutral-800 cursor-pointer hover:bg-neutral-200";
+          li.textContent = opt;
+          li.role = "option";
+          li.dataset.tagOption = opt;
+          li.id = `tag-opt-${i}`;
+          li.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            addTag(opt);
+            textInput.focus();
+          });
+          menu.appendChild(li);
+        });
+
+        if (filtered.length > 0 && textInput.value.trim() !== "") {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+      }
+
+      function openMenu() {
+        menu.classList.remove("hidden");
+        wrapper.classList.add("border-b-0");
+      }
+
+      function closeMenu() {
+        menu.classList.add("hidden");
+        wrapper.classList.remove("border-b-0");
+        activeIndex = -1;
+      }
+
+      function setActive(index: number) {
+        const items = menu.querySelectorAll<HTMLLIElement>("[data-tag-option]");
+        activeIndex = index;
+        items.forEach((item, i) => {
+          item.classList.toggle("bg-neutral-200", i === index);
+        });
+        if (index >= 0 && items[index]) {
+          items[index].scrollIntoView({ block: "nearest" });
+        }
+      }
+
+      textInput.addEventListener("input", () => {
+        renderMenu();
+      });
+
+      textInput.addEventListener("focus", () => {
+        if (textInput.value.trim() !== "") {
+          renderMenu();
+        }
+      });
+
+      textInput.addEventListener("blur", () => {
+        closeMenu();
+      });
+
+      textInput.addEventListener("keydown", (e) => {
+        const items = menu.querySelectorAll<HTMLLIElement>("[data-tag-option]");
+        const isOpen = !menu.classList.contains("hidden");
+
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault();
+            if (isOpen && items.length > 0) {
+              setActive(Math.min(activeIndex + 1, items.length - 1));
+            }
+            break;
+          case "ArrowUp":
+            e.preventDefault();
+            if (isOpen && items.length > 0) {
+              setActive(Math.max(activeIndex - 1, 0));
+            }
+            break;
+          case "Enter":
+            e.preventDefault();
+            if (isOpen && activeIndex >= 0 && items[activeIndex]) {
+              const val = items[activeIndex].dataset.tagOption;
+              if (val) addTag(val);
+            } else if (textInput.value.trim()) {
+              addTag(textInput.value);
+            }
+            break;
+          case "Escape":
+            if (isOpen) {
+              e.preventDefault();
+              closeMenu();
+            }
+            break;
+          case "Backspace":
+            if (textInput.value === "" && selected.length > 0) {
+              removeTag(selected[selected.length - 1]);
+            }
+            break;
+        }
+      });
+
+      wrapper.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        const removeBtn = target.closest<HTMLElement>("[data-tag-remove]");
+        if (removeBtn) {
+          const val = removeBtn.dataset.tagRemove;
+          if (val) removeTag(val);
+          textInput.focus();
+          return;
+        }
+        textInput.focus();
+      });
+
+      clearBtn.addEventListener("click", () => {
+        selected.length = 0;
+        renderTags();
+        renderMenu();
+        textInput.focus();
+      });
+    });
+  }
+
+  initTagInputs();
+  document.addEventListener("astro:page-load", initTagInputs);
+</script>

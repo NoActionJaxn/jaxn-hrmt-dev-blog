@@ -14,14 +14,17 @@ interface Props {
 
 const { src, alt = "", width, height, loading = "lazy", class: className } = Astro.props;
 
+const isRemote = typeof src === "string" && src.startsWith("http");
+
 const imageProps = {
   src: src!,
   alt,
   loading,
   decoding: "async" as const,
   class: classNames("object-cover", className),
-  ...(width != null && { width }),
-  ...(height != null && { height }),
+  ...(isRemote && { width: width ?? 800, height: height ?? 600 }),
+  ...(!isRemote && width != null && { width }),
+  ...(!isRemote && height != null && { height }),
 } as any;
 ---
 
