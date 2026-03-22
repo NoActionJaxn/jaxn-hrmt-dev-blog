@@ -20,26 +20,62 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
   class={className}
   aria-label={isOpen ? "Close menu" : "Open menu"}
   aria-expanded={isOpen}
+  data-menu-toggle
   {...rest}
 >
   <span class="relative w-5 h-4" aria-hidden="true">
     <span
-      class={classNames(lineBase, "origin-center", {
+      class={classNames(lineBase, "origin-center transition-all duration-300", {
         "top-0": !isOpen,
         "top-1/2 -translate-y-1/2 rotate-45": isOpen,
       })}
     />
     <span
-      class={classNames(lineBase, "top-1/2 -translate-y-1/2", {
+      class={classNames(lineBase, "top-1/2 -translate-y-1/2 transition-opacity duration-300", {
         "opacity-100": !isOpen,
         "opacity-0": isOpen,
       })}
     />
     <span
-      class={classNames(lineBase, "origin-center", {
+      class={classNames(lineBase, "origin-center transition-all duration-300", {
         "bottom-0": !isOpen,
         "top-1/2 -translate-y-1/2 -rotate-45": isOpen,
       })}
     />
   </span>
 </Button>
+
+<script>
+  import { toggleMenu, isMenuOpen } from "../stores/menuStore";
+
+  const btn = document.querySelector("[data-menu-toggle]");
+  btn?.addEventListener("click", () => {
+    toggleMenu();
+  });
+
+  isMenuOpen.subscribe((open) => {
+    if (!btn) return;
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+
+    const lines = btn.querySelectorAll("span > span");
+    if (lines.length < 3) return;
+    const [top, mid, bot] = lines;
+
+    if (open) {
+      top.className = top.className
+        .replace("top-0", "top-1/2 -translate-y-1/2 rotate-45");
+      mid.className = mid.className
+        .replace("opacity-100", "opacity-0");
+      bot.className = bot.className
+        .replace("bottom-0", "top-1/2 -translate-y-1/2 -rotate-45");
+    } else {
+      top.className = top.className
+        .replace("top-1/2 -translate-y-1/2 rotate-45", "top-0");
+      mid.className = mid.className
+        .replace("opacity-0", "opacity-100");
+      bot.className = bot.className
+        .replace("top-1/2 -translate-y-1/2 -rotate-45", "bottom-0");
+    }
+  });
+</script>

@@ -16,6 +16,7 @@
     "astro": "^6.0.5",
     "classnames": "^2.5.1",
     "gsap": "^3.14.2",
+    "nanostores": "^1.2.0",
     "tailwindcss": "^4.2.1",
     "tinacms": "^3.6.2"
   },

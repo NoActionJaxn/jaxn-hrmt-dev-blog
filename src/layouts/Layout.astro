@@ -1,5 +1,8 @@
 ---
+import PageWrapper from "../components/PageWrapper.astro";
+import PageHeader from "../components/PageHeader.astro";
 import "../styles/global.css";
+import PageMenu from "../components/PageMenu.astro";
 ---
 
 <!doctype html>
@@ -9,17 +12,28 @@ import "../styles/global.css";
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Pixelify+Sans:wght@400..700&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+			rel="stylesheet"
+		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-neutral-800 focus:text-neutral-100 focus:font-sans">Skip to content</a>
-		<main id="main-content">
+		<a
+			href="#main-content"
+			class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-neutral-800 focus:text-neutral-100 focus:font-sans"
+			>Skip to content</a
+		>
+		<PageHeader />
+		<PageMenu />
+		<PageWrapper>
 			<slot />
-		</main>
-		<script src="https://kit.fontawesome.com/1aad4926f4.js" crossorigin="anonymous"></script>
+		</PageWrapper>
+		<script
+			src="https://kit.fontawesome.com/1aad4926f4.js"
+			crossorigin="anonymous"></script>
 	</body>
 </html>

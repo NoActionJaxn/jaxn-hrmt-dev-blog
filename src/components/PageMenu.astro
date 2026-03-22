@@ -1,0 +1,65 @@
+---
+import MenuItem from "./MenuItem.astro";
+import NAVIGATION from "../constants/navigation";
+import Accent from "./Accent.astro";
+import SOCIALS from "../constants/socials";
+---
+
+<div
+  id="page-menu"
+  class="fixed top-0 right-0 h-screen z-30 bg-neutral-800 text-neutral-100 w-0 overflow-hidden transition-all duration-300 ease-in-out"
+  aria-label="Main menu"
+>
+  <div class="flex flex-col justify-between w-full h-full p-24">
+    <div class="flex flex-col gap-8">
+      <Accent as="h2" size="2xl" class="uppercase text-neutral-100"
+        >Content</Accent
+      >
+      <nav>
+        <ul class="flex flex-col gap-8 font-accent text-lg uppercase">
+          {
+            NAVIGATION.map((item, index) => (
+              <MenuItem index={index} label={item.name} href={item.href} />
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+    <div class="flex justify-end items-baseline gap-8">
+      <Accent size="sm" class="uppercase text-neutral-100">Follow Me</Accent>
+      <nav>
+        <ul class="space-x-2">
+          {SOCIALS.map((social) => (
+            <li class="inline">
+              <a href={social.href} class="text-neutral-100 text-3xl transition-colors hover:text-success-500 active:text-accent-500">
+                <i class={social.icon} aria-hidden="true"></i>
+                <span class="sr-only">{social.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { isMenuOpen } from "../stores/menuStore";
+
+  const menu = document.getElementById("page-menu");
+  const header = document.getElementById("page-header");
+  const wrapper = document.getElementById("page-wrapper");
+
+  isMenuOpen.subscribe((open) => {
+    if (!menu) return;
+    if (open) {
+      menu.style.width = "50vw";
+      if (header) header.style.right = "50vw";
+      if (wrapper) wrapper.style.marginRight = "50vw";
+    } else {
+      menu.style.width = "0";
+      if (header) header.style.right = "0";
+      if (wrapper) wrapper.style.marginRight = "0";
+    }
+  });
+</script>
