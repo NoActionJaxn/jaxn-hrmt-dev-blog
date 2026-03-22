@@ -1,8 +1,37 @@
+---
+import Header from "./Header.astro";
+import Text from "./Text.astro";
+import Button from "./Button.astro";
+import Accent from "./Accent.astro";
+
+interface Props {
+  asideTitle?: string;
+  asideDescription?: string;
+}
+
+const {
+  asideTitle = "Untitled",
+  asideDescription = "No description available",
+} = Astro.props;
+---
+
 <main
   id="page-wrapper"
-  class="pt-28 min-h-screen flex flex-col transition-all duration-300 ease-in-out"
+  class="pt-28 px-8 gap-8 min-h-screen flex flex-row transition-all duration-300 ease-in-out"
 >
-  <div class="container mx-auto">
+  <aside class="fixed left-8 top-28 bottom-0 flex flex-col justify-between py-8 w-18 z-30">
+    <div class="w-64 origin-top-left rotate-90 translate-x-18 -space-y-2">
+      <Header size="xs">{asideTitle}</Header>
+      <Text as="span" size="xs">
+        {asideDescription}
+      </Text>
+    </div>
+    <Button class="flex-col gap-2 h-auto py-4 px-0!" variant="ghost">
+      <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+      <Accent class="text-neutral-800 text-[10px]">Back to Top</Accent>
+    </Button>
+  </aside>
+  <div class="container mx-auto grow pl-24">
     <slot />
   </div>
 </main>
