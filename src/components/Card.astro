@@ -8,6 +8,8 @@ import Text from "./Text.astro";
 
 interface Props {
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   title: string;
   description: string;
   href: string;
@@ -15,25 +17,48 @@ interface Props {
   class?: string;
 }
 
-const { image, title, description, href, tags = [], class: className } = Astro.props;
+const {
+  image,
+  imageWidth,
+  imageHeight,
+  title,
+  description,
+  href,
+  tags = [],
+  class: className,
+} = Astro.props;
 ---
 
-<article class={classNames("flex flex-col gap-2", className)}>
-  <div class="border-2 border-neutral-800 flex flex-col">
-    <Image src={image} alt={title} class="w-full aspect-video" />
-    <div class="p-3 flex flex-col gap-2">
-      <Header variant="h3" size="sm">{title}</Header>
-      <Text as="p" class="line-clamp-4">{description}</Text>
-      <Button asChild class="w-full mt-1" aria-label={`Read more about ${title}`}>
+<article class={classNames("flex flex-col gap-4", className)}>
+  <div class="border-2 border-neutral-800 flex flex-col overflow-hidden">
+    <Image
+      src={image}
+      alt={title}
+      width={imageWidth}
+      height={imageHeight}
+      class="w-full aspect-video shrink-0"
+    />
+    <div class="p-3 flex flex-col gap-4 min-h-0">
+      <div class="space-y-1 min-h-0">
+        <Header variant="h3" size="sm" class="line-clamp-2">{title}</Header>
+        <Text as="p" class="line-clamp-3 overflow-hidden text-ellipsis">{description}</Text>
+      </div>
+      <Button
+        asChild
+        class="w-full mt-1"
+        aria-label={`Read more about ${title}`}
+      >
         <a href={href}>Read More</a>
       </Button>
     </div>
   </div>
-  {tags.length > 0 && (
-    <div class="flex flex-wrap gap-1">
-      {tags.map((tag) => (
-        <Tag size="sm">{tag}</Tag>
-      ))}
-    </div>
-  )}
+  {
+    tags.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <Tag size="sm">{tag}</Tag>
+        ))}
+      </div>
+    )
+  }
 </article>

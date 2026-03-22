@@ -14,7 +14,7 @@ interface Props {
 
 const { src, alt = "", width, height, loading = "lazy", class: className } = Astro.props;
 
-const isRemote = typeof src === "string" && src.startsWith("http");
+const isStringPath = typeof src === "string";
 
 const imageProps = {
   src: src!,
@@ -22,9 +22,9 @@ const imageProps = {
   loading,
   decoding: "async" as const,
   class: classNames("object-cover", className),
-  ...(isRemote && { width: width ?? 800, height: height ?? 600 }),
-  ...(!isRemote && width != null && { width }),
-  ...(!isRemote && height != null && { height }),
+  ...(isStringPath && { width: width ?? 800, height: height ?? 600 }),
+  ...(!isStringPath && width != null && { width }),
+  ...(!isStringPath && height != null && { height }),
 } as any;
 ---
 

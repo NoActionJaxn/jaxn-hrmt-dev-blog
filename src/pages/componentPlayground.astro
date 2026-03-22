@@ -210,7 +210,18 @@ import TagInput from "../components/TagInput.astro";
 			<TagInput
 				label="Skills"
 				name="skills"
-				options={["JavaScript", "TypeScript", "React", "Astro", "CSS", "Tailwind", "Node.js", "Python", "Rust", "Go"]}
+				options={[
+					{ label: "JavaScript", value: "javascript" },
+					{ label: "TypeScript", value: "typescript" },
+					{ label: "React", value: "react" },
+					{ label: "Astro", value: "astro" },
+					{ label: "CSS", value: "css" },
+					{ label: "Tailwind", value: "tailwind" },
+					{ label: "Node.js", value: "nodejs" },
+					{ label: "Python", value: "python" },
+					{ label: "Rust", value: "rust" },
+					{ label: "Go", value: "go" },
+				]}
 				placeholder="Search skills..."
 			/>
 		</div>

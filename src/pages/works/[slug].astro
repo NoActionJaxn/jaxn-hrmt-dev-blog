@@ -1,0 +1,96 @@
+---
+import { marked } from "marked";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Image from "../../components/Image.astro";
+import Tag from "../../components/Tag.astro";
+import Text from "../../components/Text.astro";
+import client from "../../../tina/__generated__/client";
+
+export async function getStaticPaths() {
+	const res = await client.queries.worksConnection();
+	const edges = res.data.worksConnection.edges ?? [];
+	return edges
+		.filter((edge) => edge?.node != null)
+		.map((edge) => ({
+			params: { slug: (edge!.node! as any).slug || edge!.node!._sys.filename },
+			props: { relativePath: edge!.node!._sys.relativePath },
+		}));
+}
+
+const { relativePath } = Astro.props;
+const res = await client.queries.works({ relativePath });
+const work = res.data.works;
+
+const filePath = join(process.cwd(), "src/content/works", relativePath);
+const raw = readFileSync(filePath, "utf-8");
+const bodyMarkdown = raw.replace(/^---[\s\S]*?---\s*/, "");
+const bodyHtml = await marked.parse(bodyMarkdown);
+
+const tags = work.tags?.filter((t): t is string => t !== null) ?? [];
+const keywords = work.metadata?.keywords?.filter((k): k is string => k !== null) ?? [];
+const formattedDate = work.createdAt
+	? new Date(work.createdAt).toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		})
+	: null;
+const updatedDate = work.isUpdated && work.updatedAt
+	? new Date(work.updatedAt).toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		})
+	: null;
+---
+
+<Layout
+	pageTitle={`${work.title} | Jaxn's Dev Blog`}
+	pageDescription={work.metadata?.description || undefined}
+	asideTitle={work.title}
+	metaAuthor={work.metadata?.author || undefined}
+	metaKeywords={keywords}
+	metaImage={work.metadata?.image || undefined}
+	metaType={work.metadata?.type || undefined}
+>
+	<article class="px-4 py-8 flex flex-col gap-6 max-w-4xl mx-auto">
+		{work.thumbnail && (
+			<Image
+				src={work.thumbnail}
+				alt={work.title}
+				class="w-full aspect-video rounded"
+			/>
+		)}
+
+		<div class="flex flex-col gap-2">
+			<Header variant="h1" size="lg">{work.title}</Header>
+			{(formattedDate || updatedDate) && (
+				<div class="flex gap-4">
+					{formattedDate && (
+						<Text as="time" size="sm" class="text-neutral-500">
+							{formattedDate}
+						</Text>
+					)}
+					{updatedDate && (
+						<Text as="span" size="sm" class="text-neutral-500 italic">
+							Updated {updatedDate}
+						</Text>
+					)}
+				</div>
+			)}
+		</div>
+
+		{tags.length > 0 && (
+			<div class="flex flex-wrap gap-1">
+				{tags.map((tag) => (
+					<Tag size="sm">{tag}</Tag>
+				))}
+			</div>
+		)}
+
+		<div class="prose prose-neutral max-w-none" set:html={bodyHtml} />
+	</article>
+</Layout>

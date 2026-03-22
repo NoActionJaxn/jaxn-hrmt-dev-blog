@@ -1,0 +1,136 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import GridBox from "../../components/GridBox.astro";
+import TagInput from "../../components/TagInput.astro";
+import Select from "../../components/Select.astro";
+import Card from "../../components/Card.astro";
+import Button from "../../components/Button.astro";
+import client from "../../../tina/__generated__/client";
+
+const res = await client.queries.worksConnection();
+const works = res.data.worksConnection.edges?.map((edge) => edge?.node) ?? [];
+
+const allTags = [
+	...new Set(
+		works.flatMap((w) => w?.tags?.filter((t): t is string => t !== null) ?? []),
+	),
+];
+
+const tagOptions = allTags.map((tag) => ({
+	label: tag.charAt(0).toUpperCase() + tag.slice(1),
+	value: tag,
+}));
+---
+
+<Layout pageTitle="Works | Jaxn's Dev Blog" asideTitle="Works">
+	<div class="px-4 pt-8">
+		<Header variant="h2">Lorem ipsum dolor sit amet.</Header>
+	</div>
+	<GridBox columns={5} gap={6} class="p-4">
+		<div class="col-span-3">
+			<TagInput
+				label="Keyword Filter"
+				name="keywords"
+				placeholder="Enter tags to filter"
+				options={tagOptions}
+			/>
+		</div>
+		<div class="col-span-1">
+			<Select
+				label="Sort By"
+				name="sortOrder"
+				default="newest"
+				placeholder="Sort by"
+				options={[
+					{ label: "Newest", value: "newest" },
+					{ label: "Oldest", value: "oldest" },
+				]}
+			/>
+		</div>
+		<div class="flex items-end col-span-1">
+			<Button data-reset-filters>Reset Filters</Button>
+		</div>
+	</GridBox>
+	<GridBox columns={3} gap={6} class="px-4 py-8">
+		{
+			works.map((work) => (
+				<Card
+					title={work?.title ?? ""}
+					description={
+						(work as any)?.description || work?.metadata?.description || ""
+					}
+					image={work?.thumbnail ?? undefined}
+					tags={work?.tags?.filter((t): t is string => t !== null) ?? []}
+					href={`/works/${(work as any)?.slug || work?._sys.filename}`}
+				/>
+			))
+		}
+	</GridBox>
+</Layout>
+
+<script>
+	function initFilterSync() {
+		const keywordsInput = document.querySelector<HTMLInputElement>('input[name="keywords"]');
+		const sortInput = document.querySelector<HTMLInputElement>('input[name="sortOrder"]');
+
+		function updateParams() {
+			const url = new URL(window.location.href);
+			const keywords = keywordsInput?.value;
+			const sort = sortInput?.value;
+
+			if (keywords) {
+				url.searchParams.set("keywords", keywords);
+			} else {
+				url.searchParams.delete("keywords");
+			}
+
+			if (sort && sort !== "newest") {
+				url.searchParams.set("sort", sort);
+			} else {
+				url.searchParams.delete("sort");
+			}
+
+			window.history.replaceState({}, "", url);
+		}
+
+		keywordsInput?.addEventListener("change", updateParams);
+		sortInput?.addEventListener("change", updateParams);
+
+		// Reset filters
+		const resetBtn = document.querySelector<HTMLButtonElement>("[data-reset-filters]");
+		resetBtn?.addEventListener("click", () => {
+			const tagInputRoot = document.querySelector<HTMLElement>("[data-tag-input]");
+			const tagClearBtn = tagInputRoot?.querySelector<HTMLButtonElement>("[data-tag-clear]");
+			tagClearBtn?.click();
+
+			const selectRoot = document.querySelector<HTMLElement>("[data-select]");
+			(selectRoot as any)?.selectByValue?.("newest");
+
+			const url = new URL(window.location.href);
+			url.searchParams.delete("keywords");
+			url.searchParams.delete("sort");
+			window.history.replaceState({}, "", url);
+		});
+
+		// Apply URL params on load
+		const url = new URL(window.location.href);
+		const initialKeywords = url.searchParams.get("keywords");
+		const initialSort = url.searchParams.get("sort");
+
+		if (initialKeywords) {
+			const tagInputRoot = document.querySelector<HTMLElement>("[data-tag-input]");
+			initialKeywords.split(",").forEach((value) => {
+				(tagInputRoot as any)?.tagInputAddTag?.(value);
+			});
+		}
+
+		if (initialSort) {
+			const selectRoot = document.querySelector<HTMLElement>("[data-select]");
+			(selectRoot as any)?.selectByValue?.(initialSort);
+		}
+	}
+
+	initFilterSync();
+	document.addEventListener("astro:page-load", initFilterSync);
+</script>

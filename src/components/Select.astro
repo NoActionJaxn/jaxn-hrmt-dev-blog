@@ -15,6 +15,7 @@ interface Props {
   placeholder?: string;
   name?: string;
   required?: boolean;
+  default?: string;
   class?: string;
 }
 
@@ -25,8 +26,11 @@ const {
   placeholder = "Choose...",
   name,
   required = false,
+  default: defaultValue,
   class: className,
 } = Astro.props;
+
+const defaultOption = defaultValue ? options.find((o) => o.value === defaultValue) : undefined;
 
 const selectId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined;
 const menuId = selectId ? `${selectId}-listbox` : `select-listbox-${Math.random().toString(36).slice(2, 8)}`;
@@ -47,7 +51,7 @@ const triggerClasses = classNames(
       {label}
     </label>
   )}
-  <input type="hidden" name={name} required={required} data-select-value />
+  <input type="hidden" name={name} required={required} value={defaultOption?.value ?? ""} data-select-value />
   <div class="relative" data-select-wrapper>
     <button
       type="button"
@@ -58,7 +62,7 @@ const triggerClasses = classNames(
       aria-haspopup="listbox"
       aria-controls={menuId}
     >
-      <span data-select-display class="text-neutral-400 truncate">{placeholder}</span>
+      <span data-select-display class:list={["truncate", defaultOption ? "text-neutral-800" : "text-neutral-400"]}>{defaultOption?.label ?? placeholder}</span>
       <i class="fa-solid fa-chevron-down text-neutral-800 ml-2 shrink-0" data-select-icon aria-hidden="true" />
     </button>
     <ul
@@ -74,7 +78,7 @@ const triggerClasses = classNames(
           data-value={opt.value}
           id={`${menuId}-opt-${i}`}
           role="option"
-          aria-selected="false"
+          aria-selected={opt.value === defaultOption?.value ? "true" : "false"}
         >
           {opt.label}
         </li>
@@ -145,6 +149,7 @@ const triggerClasses = classNames(
         display.classList.remove("text-neutral-400");
         display.classList.add("text-neutral-800");
       }
+      hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
       close();
       trigger.focus();
     }
@@ -214,5 +219,10 @@ const triggerClasses = classNames(
     document.addEventListener("click", (e) => {
       if (!root.contains(e.target as Node)) close();
     });
+
+    (root as any).selectByValue = (value: string) => {
+      const opt = optionEls.find((o) => o.dataset.value === value);
+      if (opt) selectOption(opt);
+    };
   });
 </script>

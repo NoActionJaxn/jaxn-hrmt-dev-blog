@@ -2,7 +2,7 @@
 import classNames from "classnames";
 
 interface Props {
-  columns?: 1 | 2 | 3 | 4;
+  columns?: 1 | 2 | 3 | 4 | 5;
   gap?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12;
   class?: string;
 }
@@ -27,6 +27,7 @@ const columnClasses: Record<number, string> = {
   2: "grid-cols-1 sm:grid-cols-2",
   3: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
   4: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+  5: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
 };
 ---
 

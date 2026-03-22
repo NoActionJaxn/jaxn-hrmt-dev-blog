@@ -1,5 +1,15 @@
 import { defineConfig } from "tinacms";
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 // Your hosting provider likely exposes this as an environment variable
 const branch =
   process.env.GITHUB_BRANCH ||
@@ -19,15 +29,12 @@ export default defineConfig({
     outputFolder: "admin",
     publicFolder: "public",
   },
-  // Uncomment to allow cross-origin requests from non-localhost origins
-  // during local development (e.g. GitHub Codespaces, Gitpod, Docker).
-  // Use 'private' to allow all private-network IPs (WSL2, Docker, etc.)
-  // server: {
-  //   allowedOrigins: ['https://your-codespace.github.dev'],
-  // },
+  server: {
+    allowedOrigins: ['private'],
+  },
   media: {
     tina: {
-      mediaRoot: "",
+      mediaRoot: "tina",
       publicFolder: "public",
     },
   },
@@ -35,9 +42,71 @@ export default defineConfig({
   schema: {
     collections: [
       {
-        name: "post",
-        label: "Posts",
-        path: "src/content/posts",
+        name: "works",
+        label: "Works",
+        path: "src/content/works",
+        defaultItem: () => ({
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isUpdated: false,
+          metadata: {
+            author: "Jackson Hermitt",
+            type: "article",
+          },
+        }),
+        ui: {
+          beforeSubmit: async ({
+            values,
+            cms,
+            form,
+          }: {
+            values: Record<string, any>;
+            cms: any;
+            form: any;
+          }) => {
+            const now = new Date().toISOString();
+            const createdAt = values.createdAt || now;
+
+            let slug = values.slug ? values.slug.toLowerCase() : "";
+            if (!slug && values.title) {
+              const baseSlug = slugify(values.title);
+              try {
+                const existing = await cms.api.tina.request(
+                  `query { worksConnection { edges { node { slug } } } }`,
+                  { variables: {} }
+                );
+                const slugs: string[] =
+                  existing?.data?.worksConnection?.edges
+                    ?.map((e: any) => e?.node?.slug)
+                    ?.filter(Boolean) ?? [];
+                slug = baseSlug;
+                let counter = 1;
+                while (slugs.includes(slug)) {
+                  slug = `${baseSlug}-${counter}`;
+                  counter++;
+                }
+              } catch {
+                slug = baseSlug;
+              }
+            }
+
+            return {
+              ...values,
+              slug,
+              createdAt,
+              updatedAt: now,
+              isUpdated: createdAt !== now,
+              metadata: {
+                ...(values.metadata || {}),
+                description: values.description || values.metadata?.description || "",
+                keywords: values.tags || values.metadata?.keywords || [],
+                image: values.thumbnail || values.metadata?.image || "",
+                author: values.metadata?.author || "Jackson Hermitt",
+                type: values.metadata?.type || "article",
+              },
+            };
+          },
+        },
         fields: [
           {
             type: "string",
@@ -47,10 +116,90 @@ export default defineConfig({
             required: true,
           },
           {
+            type: "string",
+            name: "slug",
+            label: "Slug",
+            description: "Auto-generated from title. Must be unique.",
+          },
+          {
+            type: "datetime",
+            name: "createdAt",
+            label: "Created At",
+          },
+          {
+            type: "datetime",
+            name: "updatedAt",
+            label: "Updated At",
+          },
+          {
+            type: "boolean",
+            name: "isUpdated",
+            label: "Is Updated",
+          },
+          {
+            type: "string",
+            name: "description",
+            label: "Description",
+            ui: {
+              component: "textarea",
+            },
+          },
+          {
+            type: "string",
+            name: "tags",
+            label: "Tags",
+            list: true,
+          },
+          {
+            type: "image",
+            name: "thumbnail",
+            label: "Thumbnail",
+          },
+          {
             type: "rich-text",
             name: "body",
             label: "Body",
             isBody: true,
+          },
+          {
+            type: "object",
+            name: "metadata",
+            label: "Metadata",
+            fields: [
+              {
+                type: "string",
+                name: "description",
+                label: "Description",
+                ui: {
+                  component: "textarea",
+                },
+              },
+              {
+                type: "string",
+                name: "author",
+                label: "Author",
+              },
+              {
+                type: "string",
+                name: "keywords",
+                label: "Keywords",
+                list: true,
+              },
+              {
+                type: "image",
+                name: "image",
+                label: "Image",
+              },
+              {
+                type: "string",
+                name: "type",
+                label: "Type",
+                options: ["website", "article"],
+                ui: {
+                  defaultValue: "article",
+                },
+              },
+            ],
           },
         ],
       },
