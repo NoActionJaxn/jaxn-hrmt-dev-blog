@@ -6,6 +6,7 @@ import TagInput from "../../components/TagInput.astro";
 import Select from "../../components/Select.astro";
 import Card from "../../components/Card.astro";
 import Button from "../../components/Button.astro";
+import Info from "../../components/Info.astro";
 import client from "../../../tina/__generated__/client";
 
 const res = await client.queries.worksConnection();
@@ -49,7 +50,7 @@ const tagOptions = allTags.map((tag) => ({
 			/>
 		</div>
 		<div class="flex items-end col-span-1">
-			<Button data-reset-filters>Reset Filters</Button>
+			<Button class="w-full" data-reset-filters>Reset Filters</Button>
 		</div>
 	</GridBox>
 	<GridBox columns={3} gap={6} class="px-4 py-8" data-cards-grid>
@@ -74,6 +75,11 @@ const tagOptions = allTags.map((tag) => ({
 			})
 		}
 	</GridBox>
+	<div class="px-4 hidden" data-empty-state>
+		<Info>
+			<span class="pt-1 block">No posts available matching your criteria.</span>
+		</Info>
+	</div>
 </Layout>
 
 <script>
@@ -81,6 +87,7 @@ const tagOptions = allTags.map((tag) => ({
 		const keywordsInput = document.querySelector<HTMLInputElement>('input[name="keywords"]');
 		const sortInput = document.querySelector<HTMLInputElement>('input[name="sortOrder"]');
 		const grid = document.querySelector<HTMLElement>("[data-cards-grid]");
+		const emptyState = document.querySelector<HTMLElement>("[data-empty-state]");
 
 		function applyFilters() {
 			if (!grid) return;
@@ -110,6 +117,11 @@ const tagOptions = allTags.map((tag) => ({
 			});
 
 			sorted.forEach((item) => grid.appendChild(item));
+
+			const visibleCount = items.filter((item) => item.style.display !== "none").length;
+			if (emptyState) {
+				emptyState.classList.toggle("hidden", visibleCount > 0);
+			}
 		}
 
 		function updateParams() {
