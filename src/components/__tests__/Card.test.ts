@@ -43,8 +43,6 @@ describe("Card", () => {
 
   it("does not render tags section when empty", async () => {
     const $ = await renderComponent(Card, { ...baseProps, tags: [] });
-    // No tag elements outside the card body
-    const tagWrapper = $("article > div:last-child .flex-wrap");
     // The div.flex-wrap for tags should not exist
     expect($("article").text()).not.toContain("astro");
   });
