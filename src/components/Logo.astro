@@ -39,6 +39,11 @@ let fullTitle = "jackson hermitt";
     cursorPos: number;
   }
 
+  interface AnimatedElement extends HTMLElement {
+    _cursorState?: CursorState;
+    _cancelAnim?: () => void;
+  }
+
   function setText(el: HTMLElement, text: string) {
     el.textContent = text;
     el.dataset.text = text;
@@ -52,23 +57,23 @@ let fullTitle = "jackson hermitt";
     return new Promise((r) => setTimeout(r, ms));
   }
 
-  function getState(el: HTMLElement): CursorState {
-    let state = (el as any)._cursorState as CursorState | undefined;
+  function getState(el: AnimatedElement): CursorState {
+    let state = el._cursorState;
     if (!state) {
       state = { cursorPos: 0 };
-      (el as any)._cursorState = state;
+      el._cursorState = state;
     }
     return state;
   }
 
   function animateCursor(
-    el: HTMLElement,
+    el: AnimatedElement,
     short: string,
     full: string,
     direction: "forward" | "backward",
   ) {
     // cancel any running animation
-    (el as any)._cancelAnim?.();
+    el._cancelAnim?.();
 
     const state = getState(el);
     const scrambleCount = 3;
@@ -77,7 +82,7 @@ let fullTitle = "jackson hermitt";
     let cancelled = false;
 
     // store cancel handle for next invocation
-    (el as any)._cancelAnim = () => {
+    el._cancelAnim = () => {
       cancelled = true;
     };
 
@@ -144,11 +149,12 @@ let fullTitle = "jackson hermitt";
           parent.addEventListener("mouseenter", () => setText(el, full));
           parent.addEventListener("mouseleave", () => setText(el, short));
         } else {
+          const animEl = el as AnimatedElement;
           parent.addEventListener("mouseenter", () =>
-            animateCursor(el, short, full, "forward"),
+            animateCursor(animEl, short, full, "forward"),
           );
           parent.addEventListener("mouseleave", () =>
-            animateCursor(el, short, full, "backward"),
+            animateCursor(animEl, short, full, "backward"),
           );
         }
       });

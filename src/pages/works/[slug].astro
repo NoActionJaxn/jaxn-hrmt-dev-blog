@@ -6,7 +6,7 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Image from "../../components/Image.astro";
 import Tag from "../../components/Tag.astro";
-import Text from "../../components/Text.astro";
+import Button from "../../components/Button.astro";
 import client from "../../../tina/__generated__/client";
 import formatDate from "../../util/formatDate";
 import PostInfo from "../../components/PostInfo.astro";
@@ -17,12 +17,13 @@ export async function getStaticPaths() {
   return edges
     .filter((edge) => edge?.node != null)
     .map((edge) => ({
-      params: { slug: (edge!.node! as any).slug || edge!.node!._sys.filename },
+      params: { slug: edge!.node!.slug || edge!.node!._sys.filename },
       props: { relativePath: edge!.node!._sys.relativePath },
     }));
 }
 
 const { relativePath } = Astro.props;
+
 const res = await client.queries.works({ relativePath });
 const work = res.data.works;
 
@@ -48,27 +49,34 @@ const updatedDate =
   metaImage={work.metadata?.image || undefined}
   metaType={work.metadata?.type || undefined}
 >
-  <article class="px-4 py-8 flex flex-col gap-6 max-w-4xl mx-auto">
-    {
-      work.thumbnail && (
-        <Image
-          src={work.thumbnail}
-          alt={work.title}
-          class="w-full aspect-video"
-					loading="eager"
-        />
-      )
-    }
+  <article class="px-4 py-8 flex flex-col gap-8 max-w-4xl mx-auto">
+    <div class="space-y-2">
+      <Button asChild variant="ghost">
+        <a href="/works" class="gap-2" aria-label="Back to works listing">
+          <i class="fa-solid fa-chevron-left text-xs mt-0.5" aria-hidden="true"
+          ></i>
+          <span>Back</span>
+        </a>
+      </Button>
+      {
+        work.thumbnail && (
+          <Image
+            src={work.thumbnail}
+            alt={work.title}
+            class="w-full aspect-video"
+          />
+        )
+      }
+    </div>
 
     <div class="flex flex-col gap-2">
       <Header variant="h1" size="lg">{work.title}</Header>
       <PostInfo
-				createdAt={formattedDate}
-				updatedAt={updatedDate}
-				isUpdated={work.isUpdated ?? false}
-				readTime={work.metadata?.readTime ?? undefined}
+        createdAt={formattedDate}
+        updatedAt={updatedDate}
+        isUpdated={work.isUpdated ?? false}
+        readTime={work.metadata?.readTime ?? undefined}
       />
-
     </div>
 
     {

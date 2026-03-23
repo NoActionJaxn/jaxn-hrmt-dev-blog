@@ -5,7 +5,7 @@ import Button from "./Button.astro";
 interface Props {
   isOpen?: boolean;
   class?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const { isOpen = false, class: className, ...rest } = Astro.props;

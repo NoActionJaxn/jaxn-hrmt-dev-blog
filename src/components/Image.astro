@@ -25,7 +25,7 @@ const imageProps = {
   ...(isStringPath && { width: width ?? 800, height: height ?? 600 }),
   ...(!isStringPath && width != null && { width }),
   ...(!isStringPath && height != null && { height }),
-} as any;
+};
 ---
 
 {src ? (

@@ -7,14 +7,12 @@ type Variant = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 type Props = {
   size?: Size;
   variant?: Variant;
-  asChild?: boolean;
   class?: string;
 };
 
 const {
   size = "base",
   variant = "h1",
-  asChild = false,
   class: className,
   ...rest
 } = Astro.props;

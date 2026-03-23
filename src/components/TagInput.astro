@@ -284,7 +284,7 @@ const wrapperClasses = classNames(
         textInput.focus();
       });
 
-      (root as any).tagInputAddTag = (value: string) => {
+      (root as HTMLElement & { tagInputAddTag?: (value: string) => void }).tagInputAddTag = (value: string) => {
         const opt = options.find((o) => o.value === value);
         if (opt) addTag(opt);
       };

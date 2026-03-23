@@ -1,6 +1,11 @@
 import { defineConfig } from "tinacms";
 
-function extractText(node: any): string {
+interface RichTextNode {
+  text?: string;
+  children?: RichTextNode[];
+}
+
+function extractText(node: RichTextNode | string | null | undefined): string {
   if (!node) return "";
   if (typeof node === "string") return node;
   if (node.text) return node.text;
@@ -10,7 +15,7 @@ function extractText(node: any): string {
   return "";
 }
 
-function calculateReadTime(body: any): number {
+function calculateReadTime(body: RichTextNode | string | null | undefined): number {
   const text = extractText(body);
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 200));
@@ -74,27 +79,42 @@ export default defineConfig({
           beforeSubmit: async ({
             values,
             cms,
-            form,
           }: {
-            values: Record<string, any>;
-            cms: any;
-            form: any;
+            values: Record<string, unknown>;
+            cms: { api: { tina: { request: (query: string, options: { variables: Record<string, unknown> }) => Promise<Record<string, unknown>> } } };
           }) => {
+            const vals = values as {
+              slug?: string;
+              title?: string;
+              createdAt?: string;
+              description?: string;
+              tags?: string[];
+              thumbnail?: string;
+              body?: RichTextNode;
+              metadata?: {
+                description?: string;
+                keywords?: string[];
+                image?: string;
+                author?: string;
+                type?: string;
+              };
+            };
             const now = new Date().toISOString();
-            const createdAt = values.createdAt || now;
+            const createdAt = vals.createdAt || now;
 
-            let slug = values.slug ? values.slug.toLowerCase() : "";
-            if (!slug && values.title) {
-              const baseSlug = slugify(values.title);
+            let slug = typeof vals.slug === "string" ? vals.slug.toLowerCase() : "";
+            if (!slug && vals.title) {
+              const baseSlug = slugify(vals.title);
               try {
                 const existing = await cms.api.tina.request(
                   `query { worksConnection { edges { node { slug } } } }`,
                   { variables: {} }
                 );
+                const data = existing?.data as { worksConnection?: { edges?: { node?: { slug?: string } }[] } } | undefined;
                 const slugs: string[] =
-                  existing?.data?.worksConnection?.edges
-                    ?.map((e: any) => e?.node?.slug)
-                    ?.filter(Boolean) ?? [];
+                  data?.worksConnection?.edges
+                    ?.map((e) => e?.node?.slug)
+                    ?.filter((s): s is string => Boolean(s)) ?? [];
                 slug = baseSlug;
                 let counter = 1;
                 while (slugs.includes(slug)) {
@@ -113,13 +133,13 @@ export default defineConfig({
               updatedAt: now,
               isUpdated: createdAt !== now,
               metadata: {
-                ...(values.metadata || {}),
-                description: values.description || values.metadata?.description || "",
-                keywords: values.tags || values.metadata?.keywords || [],
-                image: values.thumbnail || values.metadata?.image || "",
-                author: values.metadata?.author || "Jackson Hermitt",
-                type: values.metadata?.type || "article",
-                readTime: calculateReadTime(values.body),
+                ...(vals.metadata || {}),
+                description: vals.description || vals.metadata?.description || "",
+                keywords: vals.tags || vals.metadata?.keywords || [],
+                image: vals.thumbnail || vals.metadata?.image || "",
+                author: vals.metadata?.author || "Jackson Hermitt",
+                type: vals.metadata?.type || "article",
+                readTime: calculateReadTime(vals.body),
               },
             };
           },

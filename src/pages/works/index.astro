@@ -39,7 +39,7 @@ const tagOptions = allTags.map((tag) => ({
 		</div>
 		<div class="col-span-1">
 			<Select
-				label="Sort By"
+				label="Order By"
 				name="sortOrder"
 				default="newest"
 				placeholder="Sort by"
@@ -57,18 +57,18 @@ const tagOptions = allTags.map((tag) => ({
 		{
 			works.map((work, i) => {
 				const cardTags = work?.tags?.filter((t): t is string => t !== null) ?? [];
-				const cardDate = (work as any)?.createdAt ?? "";
+				const cardDate = work?.createdAt ?? "";
 				return (
 					<div data-card-item data-tags={cardTags.join(",")} data-date={cardDate}>
 						<Card
 							title={work?.title ?? ""}
 							description={
-								(work as any)?.description || work?.metadata?.description || ""
+								work?.description || work?.metadata?.description || ""
 							}
 							image={work?.thumbnail ?? undefined}
 							loading={i < 9 ? "eager" : "lazy"}
 							tags={cardTags}
-							href={`/works/${(work as any)?.slug || work?._sys.filename}`}
+							href={`/works/${work?.slug || work?._sys.filename}`}
 						/>
 					</div>
 				);
@@ -156,7 +156,7 @@ const tagOptions = allTags.map((tag) => ({
 			tagClearBtn?.click();
 
 			const selectRoot = document.querySelector<HTMLElement>("[data-select]");
-			(selectRoot as any)?.selectByValue?.("newest");
+			(selectRoot as HTMLElement & { selectByValue?: (value: string) => void })?.selectByValue?.("newest");
 
 			const url = new URL(window.location.href);
 			url.searchParams.delete("keywords");
@@ -173,13 +173,13 @@ const tagOptions = allTags.map((tag) => ({
 		if (initialKeywords) {
 			const tagInputRoot = document.querySelector<HTMLElement>("[data-tag-input]");
 			initialKeywords.split(",").forEach((value) => {
-				(tagInputRoot as any)?.tagInputAddTag?.(value);
+				(tagInputRoot as HTMLElement & { tagInputAddTag?: (value: string) => void })?.tagInputAddTag?.(value);
 			});
 		}
 
 		if (initialSort) {
 			const selectRoot = document.querySelector<HTMLElement>("[data-select]");
-			(selectRoot as any)?.selectByValue?.(initialSort);
+			(selectRoot as HTMLElement & { selectByValue?: (value: string) => void })?.selectByValue?.(initialSort);
 		}
 
 		applyFilters();
