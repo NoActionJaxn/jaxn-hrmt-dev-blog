@@ -33,7 +33,7 @@ cp .env.example .env
 npm run dev
 ```
 
-The site runs at `http://localhost:4321` and the TinaCMS admin at `http://localhost:4321/admin`.
+The site runs at `http://localhost:4321` and the TinaCMS admin at `http://localhost:4001/admin`.
 
 ## Commands
 

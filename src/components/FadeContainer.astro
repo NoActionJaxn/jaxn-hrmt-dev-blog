@@ -1,0 +1,17 @@
+---
+import classNames from "classnames";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div
+  class={classNames(className)}
+  data-fade-container
+  style="opacity: 0;"
+>
+  <slot />
+</div>

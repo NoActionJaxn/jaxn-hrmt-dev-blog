@@ -1,0 +1,52 @@
+---
+import classNames from "classnames";
+
+interface Props {
+  delay?: number;
+  duration?: number;
+  class?: string;
+}
+
+const { delay = 200, duration = 500, class: className } = Astro.props;
+---
+
+<div
+  class={classNames(className)}
+  data-animation-controller
+  data-animation-delay={delay}
+  data-animation-duration={duration}
+>
+  <slot />
+</div>
+
+<script>
+  function initController(controller: HTMLElement) {
+    const delay = Number(controller.dataset.animationDelay ?? 200);
+    const duration = Number(controller.dataset.animationDuration ?? 500);
+    const items = Array.from(controller.querySelectorAll<HTMLElement>("[data-fade-container]"));
+
+    items.sort((a, b) => {
+      const rectA = a.getBoundingClientRect();
+      const rectB = b.getBoundingClientRect();
+      if (Math.abs(rectA.top - rectB.top) > 1) return rectA.top - rectB.top;
+      return rectA.left - rectB.left;
+    });
+
+    items.forEach((item, index) => {
+      item.style.transition = `opacity ${duration}ms ease`;
+      setTimeout(() => {
+        item.style.opacity = "1";
+      }, index * delay);
+    });
+  }
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll<HTMLElement>("[data-animation-controller]").forEach(initController);
+  });
+
+  document.addEventListener("astro:page-load", () => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll<HTMLElement>("[data-animation-controller]").forEach(initController);
+    });
+  });
+</script>

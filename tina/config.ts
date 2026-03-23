@@ -51,7 +51,7 @@ export default defineConfig({
     publicFolder: "public",
   },
   server: {
-    allowedOrigins: ['private'],
+    allowedOrigins: ['private', 'http://localhost:4321', 'http://localhost:4001'],
   },
   media: {
     tina: {
