@@ -3,6 +3,7 @@
     "hrmt",
     "nanostores",
     "Tweens",
-    "unsub"
+    "unsub",
+    "vitest"
   ]
 }
