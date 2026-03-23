@@ -31,20 +31,20 @@ const {
     <div>
       {
         createdAt && (
-          <Text size="sm" class="font-bold">{t("postInfo.published")} {formatDate(createdAt)}</Text>
+          <Text size="sm" class="font-bold">{t("postInfo.published")}&nbsp;{formatDate(createdAt)}</Text>
         )
       }
     </div>
     <div>
       {
         isUpdated && updatedAt && (
-          <Text size="xs" class="italic text-neutral-400!"> {t("postInfo.updated")} {formatDate(updatedAt)}</Text>
+          <Text size="xs" class="italic text-neutral-400!"> {t("postInfo.updated")}&nbsp;{formatDate(updatedAt)}</Text>
         )
       }
     </div>
   </div>
 
   <div>
-    {readTime != null && <Text size="sm" class="font-bold">{t("postInfo.readTime")} {readTime} {t("postInfo.minRead")}</Text>}
+    {readTime != null && <Text size="sm" class="font-bold">{t("postInfo.readTime")}&nbsp;{readTime}&nbsp;{t("postInfo.minRead")}</Text>}
   </div>
 </div>

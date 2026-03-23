@@ -26,6 +26,9 @@ cd jaxn-hrmt-dev-blog
 # Install dependencies
 npm install
 
+# Copy the example env file and fill in your TinaCMS keys
+cp .env.example .env
+
 # Start the dev server (Astro + TinaCMS)
 npm run dev
 ```
