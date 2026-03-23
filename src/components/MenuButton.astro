@@ -1,6 +1,7 @@
 ---
 import classNames from "classnames";
 import Button from "./Button.astro";
+import { t } from "../i18n/utils";
 
 interface Props {
   isOpen?: boolean;
@@ -18,9 +19,11 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
   square
   variant="ghost"
   class={className}
-  aria-label={isOpen ? "Close menu" : "Open menu"}
+  aria-label={isOpen ? t("menuButton.closeMenu") : t("menuButton.openMenu")}
   aria-expanded={isOpen}
   data-menu-toggle
+  data-label-open={t("menuButton.openMenu")}
+  data-label-close={t("menuButton.closeMenu")}
   {...rest}
 >
   <span class="relative w-5 h-4" aria-hidden="true">
@@ -53,7 +56,7 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
   document.addEventListener("astro:page-load", () => {
     if (unsub) unsub();
 
-    const btn = document.querySelector("[data-menu-toggle]");
+    const btn = document.querySelector<HTMLElement>("[data-menu-toggle]");
     if (!btn) return;
 
     btn.addEventListener("click", () => {
@@ -62,7 +65,7 @@ const lineBase = "block absolute left-1/2 -translate-x-1/2 w-5 h-0.5 bg-current"
 
     function applyState(open: boolean, animate: boolean) {
       btn!.setAttribute("aria-expanded", String(open));
-      btn!.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      btn!.setAttribute("aria-label", open ? btn!.dataset.labelClose! : btn!.dataset.labelOpen!);
 
       const lines = btn!.querySelectorAll("span > span");
       if (lines.length < 3) return;

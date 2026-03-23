@@ -5,6 +5,7 @@ import PageHeader from "../components/PageHeader.astro";
 import PageMenu from "../components/PageMenu.astro";
 import "../styles/global.css";
 import PageFooter from "../components/PageFooter.astro";
+import { t } from "../i18n/utils";
 
 interface Props {
 	pageTitle?: string;
@@ -19,11 +20,11 @@ interface Props {
 }
 
 const {
-	pageTitle = "jaxn-hrmt",
-	pageDescription = "No description available",
-	asideTitle = "Page",
-	asideDescription = "development portfolio",
-	metaAuthor = "Jackson Hermitt",
+	pageTitle = t("layout.defaultTitle"),
+	pageDescription = t("layout.defaultDescription"),
+	asideTitle = t("layout.defaultAsideTitle"),
+	asideDescription = t("layout.defaultAsideDescription"),
+	metaAuthor = t("layout.defaultAuthor"),
 	metaKeywords = [],
 	metaImage = "",
 	metaUrl = Astro.url.href,
@@ -87,7 +88,7 @@ const {
 		<a
 			href="#main-content"
 			class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-neutral-800 focus:text-neutral-100 focus:font-sans"
-			>Skip to content</a
+			>{t("layout.skipToContent")}</a
 		>
 		<PageHeader />
 		<PageMenu />

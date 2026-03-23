@@ -3,6 +3,7 @@ import Header from "./Header.astro";
 import Text from "./Text.astro";
 import Button from "./Button.astro";
 import Accent from "./Accent.astro";
+import { t } from "../i18n/utils";
 
 interface Props {
   title?: string;
@@ -31,7 +32,7 @@ const { title, description } = Astro.props;
       data-back-to-top
     >
       <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
-      <Accent class="text-neutral-800 text-[10px]">Back to Top</Accent>
+      <Accent class="text-neutral-800 text-[10px]">{t("wrapper.backToTop")}</Accent>
     </Button>
   </aside>
   <div class="flex flex-col container mx-auto grow pl-0 md:pl-24 pb-12">
@@ -45,7 +46,7 @@ const { title, description } = Astro.props;
   data-back-to-top-mobile
 >
   <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
-  <Accent class="text-neutral-800 text-[10px]">Top</Accent>
+  <Accent class="text-neutral-800 text-[10px]">{t("wrapper.top")}</Accent>
 </Button>
 
 <script>

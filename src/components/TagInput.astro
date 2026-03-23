@@ -1,6 +1,7 @@
 ---
 import classNames from "classnames";
 import Tag from "./Tag.astro";
+import { t } from "../i18n/utils";
 
 type Size = "sm" | "base" | "lg";
 
@@ -23,7 +24,7 @@ const {
   size = "base",
   label,
   options = [],
-  placeholder = "Type to search...",
+  placeholder = t("tagInput.placeholder"),
   name,
   required = false,
   class: className,
@@ -61,7 +62,7 @@ const wrapperClasses = classNames(
       type="button"
       class="hidden items-center justify-center text-neutral-500 hover:text-neutral-800 shrink-0 ml-auto cursor-pointer"
       data-tag-clear
-      aria-label="Clear all tags"
+      aria-label={t("tagInput.clearAll")}
     >
       <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
     </button>
@@ -74,7 +75,7 @@ const wrapperClasses = classNames(
   </ul>
   <template data-tag-template>
     <Tag size="sm" class="inline-flex items-center gap-1 cursor-default!" data-tag-chip>
-      <span data-tag-label></span><button type="button" class="ml-0.5 hover:text-accent-500 cursor-pointer" aria-label="Remove"><i class="fa-solid fa-xmark text-[10px]" aria-hidden="true"></i></button>
+      <span data-tag-label></span><button type="button" class="ml-0.5 hover:text-accent-500 cursor-pointer" data-tag-remove-btn aria-label={t("tagInput.remove")}><i class="fa-solid fa-xmark text-[10px]" aria-hidden="true"></i></button>
     </Tag>
   </template>
 </div>

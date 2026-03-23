@@ -1,5 +1,6 @@
 ---
 import classNames from "classnames";
+import { t } from "../i18n/utils";
 
 type Size = "sm" | "base" | "lg";
 
@@ -23,7 +24,7 @@ const {
   size = "base",
   label,
   options,
-  placeholder = "Choose...",
+  placeholder = t("select.placeholder"),
   name,
   required = false,
   default: defaultValue,

@@ -8,6 +8,7 @@ import Card from "../../components/Card.astro";
 import Button from "../../components/Button.astro";
 import Info from "../../components/Info.astro";
 import client from "../../../tina/__generated__/client";
+import { t } from "../../i18n/utils";
 
 const res = await client.queries.worksConnection();
 const works = res.data.worksConnection.edges?.map((edge) => edge?.node) ?? [];
@@ -24,33 +25,33 @@ const tagOptions = allTags.map((tag) => ({
 }));
 ---
 
-<Layout pageTitle="Works | Jaxn's Dev Blog" asideTitle="Works">
+<Layout pageTitle={t("works.pageTitle")} asideTitle={t("works.asideTitle")}>
 	<div class="px-4 pt-8">
-		<Header variant="h2">Lorem ipsum dolor sit amet.</Header>
+		<Header variant="h2">{t("works.heading")}</Header>
 	</div>
 	<GridBox columns={5} gap={6} class="p-4">
 		<div class="col-span-3">
 			<TagInput
-				label="Keyword Filter"
+				label={t("works.keywordFilter")}
 				name="keywords"
-				placeholder="Enter tags to filter"
+				placeholder={t("works.enterTags")}
 				options={tagOptions}
 			/>
 		</div>
 		<div class="col-span-1">
 			<Select
-				label="Order By"
+				label={t("works.orderBy")}
 				name="sortOrder"
 				default="newest"
-				placeholder="Sort by"
+				placeholder={t("works.sortBy")}
 				options={[
-					{ label: "Newest", value: "newest" },
-					{ label: "Oldest", value: "oldest" },
+					{ label: t("works.newest"), value: "newest" },
+					{ label: t("works.oldest"), value: "oldest" },
 				]}
 			/>
 		</div>
 		<div class="flex items-end col-span-1">
-			<Button class="w-full" data-reset-filters>Reset Filters</Button>
+			<Button class="w-full" data-reset-filters>{t("works.resetFilters")}</Button>
 		</div>
 	</GridBox>
 	<GridBox columns={3} gap={6} class="px-4 py-8" data-cards-grid>
@@ -77,7 +78,7 @@ const tagOptions = allTags.map((tag) => ({
 	</GridBox>
 	<div class="px-4 hidden" data-empty-state>
 		<Info>
-			<span class="pt-1 block">No posts available matching your criteria.</span>
+			<span class="pt-1 block">{t("works.emptyState")}</span>
 		</Info>
 	</div>
 </Layout>

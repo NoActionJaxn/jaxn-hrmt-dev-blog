@@ -1,12 +1,14 @@
 ---
-let title = "jaxn hrmt";
-let fullTitle = "jackson hermitt";
+import { t } from "../i18n/utils";
+
+let title = t("logo.short");
+let fullTitle = t("logo.full");
 ---
 
 <a href="/">
   <div
     class="p-4 text-5xl inline-block select-none cursor-pointer"
-    aria-label="jackson hermitt"
+    aria-label={fullTitle}
   >
     <span
       class="font-accent text-accent-500 relative inline-block whitespace-nowrap"

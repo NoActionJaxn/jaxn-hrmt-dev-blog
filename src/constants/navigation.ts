@@ -1,8 +1,8 @@
 const NAVIGATION = [
-  { name: "Index", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Works", href: "/works" },
-  { name: "Contact", href: "/contact" },
+  { name: "nav.index", href: "/" },
+  { name: "nav.about", href: "/about" },
+  { name: "nav.works", href: "/works" },
+  { name: "nav.contact", href: "/contact" },
 ];
 
 export default NAVIGATION;

@@ -2,12 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 import Image from "../components/Image.astro";
 import Quote from "../components/Quote.astro";
+import { t } from "../i18n/utils";
 ---
 
-<Layout pageTitle="Index | Jaxn's Dev Blog" asideTitle="Index">
+<Layout pageTitle={t("index.pageTitle")} asideTitle={t("index.asideTitle")}>
 	<Image class="aspect-4/3" />
 	<Quote>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-		tempor incididunt ut labore et dolore magna aliqua.
+		{t("index.quote")}
 	</Quote>
 </Layout>

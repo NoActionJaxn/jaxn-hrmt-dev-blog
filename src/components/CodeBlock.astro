@@ -1,6 +1,7 @@
 ---
 import classNames from "classnames";
 import Button from "./Button.astro";
+import { t } from "../i18n/utils";
 
 interface Props {
   class?: string;
@@ -20,12 +21,12 @@ const { class: className } = Astro.props;
     type="button"
     class="absolute top-2 right-2 text-success-500"
     data-codeblock-copy
-    aria-label="Copy code"
+    aria-label={t("codeblock.copyCode")}
     square
   >
     <i class="fa-solid fa-copy text-lg" aria-hidden="true"></i>
   </Button>
-  <span class="sr-only" data-codeblock-status aria-live="polite"></span>
+  <span class="sr-only" data-codeblock-status aria-live="polite" data-copied-msg={t("codeblock.copiedToClipboard")}></span>
   <pre class="font-mono p-6 pr-10 overflow-x-auto text-success-500"><code><slot /></code></pre>
 </div>
 
@@ -47,7 +48,7 @@ const { class: className } = Astro.props;
           const icon = btn.querySelector("i")!;
           const status = block.querySelector<HTMLElement>("[data-codeblock-status]")!;
           icon.classList.replace("fa-copy", "fa-check");
-          status.textContent = "Copied to clipboard";
+          status.textContent = status.dataset.copiedMsg || "Copied to clipboard";
           setTimeout(() => {
             icon.classList.replace("fa-check", "fa-copy");
             status.textContent = "";

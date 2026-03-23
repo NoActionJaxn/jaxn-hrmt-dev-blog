@@ -9,60 +9,48 @@ import Text from "../components/Text.astro";
 import CollapsibleGroup from "../components/CollapsibleGroup.astro";
 import Collapsible from "../components/Collapsible.astro";
 import Button from "../components/Button.astro";
+import { t } from "../i18n/utils";
 ---
 
-<Layout pageTitle="About | Jaxn's Dev Blog" asideTitle="About">
+<Layout pageTitle={t("about.pageTitle")} asideTitle={t("about.asideTitle")}>
   <GridBox columns={2} gap={12}>
     <div>
       <Image class="aspect-4/3" />
     </div>
     <div class="flex flex-col justify-center">
       <Quote>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+        {t("about.quote")}
       </Quote>
     </div>
     <div class="space-y-4">
       <div>
-        <Header variant="h2" size="lg">Lorem ipsum dolor sit amet.</Header>
-        <Accent>Lorem ipsum dolor sit amet.</Accent>
+        <Header variant="h2" size="lg">{t("about.sectionTitle")}</Header>
+        <Accent>{t("about.sectionSubtitle")}</Accent>
       </div>
 			<div>
 				<Text>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-					veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-					commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-					velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-					occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-					mollit anim id est laborum.
+					{t("about.sectionText")}
 				</Text>
 			</div>
 			<Button asChild>
-				<a href="">Download Resume</a>
+				<a href="">{t("about.downloadResume")}</a>
 			</Button>
     </div>
     <div>
 			<CollapsibleGroup accordion>
-					<Collapsible title="Accordion 1" open>
+					<Collapsible title={t("about.accordion1Title")} open>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
-							faucibus ex sapien vitae pellentesque sem placerat. In id cursus
-							mi pretium tellus duis convallis.
+							{t("about.accordion1Text")}
 						</p>
 					</Collapsible>
-					<Collapsible title="Accordion 2">
+					<Collapsible title={t("about.accordion2Title")}>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
-							faucibus ex sapien vitae pellentesque sem placerat. In id cursus
-							mi pretium tellus duis convallis.
+							{t("about.accordion2Text")}
 						</p>
 					</Collapsible>
-					<Collapsible title="Accordion 3">
+					<Collapsible title={t("about.accordion3Title")}>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
-							faucibus ex sapien vitae pellentesque sem placerat. In id cursus
-							mi pretium tellus duis convallis.
+							{t("about.accordion3Text")}
 						</p>
 					</Collapsible>
 				</CollapsibleGroup>

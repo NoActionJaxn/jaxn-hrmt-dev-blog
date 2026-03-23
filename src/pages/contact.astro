@@ -7,20 +7,15 @@ import TextArea from "../components/TextArea.astro";
 import Select from "../components/Select.astro";
 import Button from "../components/Button.astro";
 import GridBox from "../components/GridBox.astro";
+import { t } from "../i18n/utils";
 ---
 
-<Layout pageTitle="Contact | Jaxn's Dev Blog" asideTitle="Contact">
+<Layout pageTitle={t("contact.pageTitle")} asideTitle={t("contact.asideTitle")}>
   <div class="flex flex-col gap-y-6 gap-x-4 p-4">
     <div class="space-y-2">
-      <Header variant="h2" size="xl">Lorem ipsum dolor sit amet.</Header>
+      <Header variant="h2" size="xl">{t("contact.heading")}</Header>
       <Text>
-        Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus
-        ex sapien vitae pellentesque sem placerat. In id cursus mi pretium
-        tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
-        Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis
-        massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper
-        vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra
-        inceptos himenaeos.
+        {t("contact.description")}
       </Text>
     </div>
     <div class="pt-8">
@@ -28,56 +23,56 @@ import GridBox from "../components/GridBox.astro";
         <GridBox columns={2} gap={4}>
           <div>
             <TextInput
-              label="First Name"
+              label={t("contact.firstName")}
               name="firstName"
-              placeholder="Enter your first name"
+              placeholder={t("contact.firstNamePlaceholder")}
               required
             />
           </div>
           <div>
             <TextInput
-              label="Last Name"
+              label={t("contact.lastName")}
               name="lastName"
-              placeholder="Enter your last name"
+              placeholder={t("contact.lastNamePlaceholder")}
               required
             />
           </div>
           <div class="col-span-2">
             <TextInput
-              label="Email"
+              label={t("contact.email")}
               type="email"
               name="email"
-              placeholder="Enter your email address"
+              placeholder={t("contact.emailPlaceholder")}
               required
             />
           </div>
           <div class="col-span-2">
             <Select
-              label="Purpose of Contact"
+              label={t("contact.purposeLabel")}
               name="purpose"
-              placeholder="Select an option"
+              placeholder={t("contact.purposePlaceholder")}
               options={[
-                { label: "General Inquiry", value: "general" },
-                { label: "Freelance / Contract Work", value: "freelance" },
-                { label: "Collaboration", value: "collaboration" },
-                { label: "Bug Report / Issue", value: "bug" },
-                { label: "Feedback", value: "feedback" },
-                { label: "Other", value: "other" },
+                { label: t("contact.purposeGeneral"), value: "general" },
+                { label: t("contact.purposeFreelance"), value: "freelance" },
+                { label: t("contact.purposeCollaboration"), value: "collaboration" },
+                { label: t("contact.purposeBug"), value: "bug" },
+                { label: t("contact.purposeFeedback"), value: "feedback" },
+                { label: t("contact.purposeOther"), value: "other" },
               ]}
               required
             />
           </div>
           <div class="col-span-2">
             <TextArea
-              label="Message"
+              label={t("contact.messageLabel")}
               name="message"
-              placeholder="Enter your message"
+              placeholder={t("contact.messagePlaceholder")}
               required
             />
           </div>
           <div class="col-span-2 flex gap-2 justify-end">
-            <Button type="submit">Submit</Button>
-            <Button type="reset" variant="outline" class="ml-2">Reset</Button>
+            <Button type="submit">{t("contact.submit")}</Button>
+            <Button type="reset" variant="outline" class="ml-2">{t("contact.reset")}</Button>
           </div>
         </GridBox>
       </form>
