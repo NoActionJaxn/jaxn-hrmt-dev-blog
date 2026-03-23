@@ -1,5 +1,5 @@
 const NAVIGATION = [
-  { name: "Home", href: "/" },
+  { name: "Index", href: "/" },
   { name: "About", href: "/about" },
   { name: "Works", href: "/works" },
   { name: "Contact", href: "/contact" },

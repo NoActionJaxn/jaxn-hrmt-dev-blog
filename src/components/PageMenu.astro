@@ -122,5 +122,12 @@ import SOCIALS from "../constants/socials";
         if (mobileBackToTop) mobileBackToTop.style.display = "";
       }
     });
+
+    // Close menu when clicking internal nav links on mobile
+    menu?.querySelectorAll("nav a[href]:not([target='_blank'])").forEach((link) => {
+      link.addEventListener("click", () => {
+        if (isMobile()) isMenuOpen.set(false);
+      });
+    });
   });
 </script>
