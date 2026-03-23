@@ -1,0 +1,32 @@
+---
+import Accent from "./Accent.astro";
+import SOCIALS from "../constants/socials";
+---
+
+<div id="page-footer" class="flex justify-between">
+  <div class="flex flex-col justify-end">
+    <Accent class="text-xs text-neutral-800">jaxn hrmt</Accent>
+  </div>
+  <div class="flex gap-2.5 justify-end">
+    <div class="flex flex-col justify-end pb-1">
+      <Accent class="text-xs text-neutral-800 uppercase"> Follow me </Accent>
+    </div>
+    <ul class="space-x-2">
+      {
+        SOCIALS.map((social) => (
+          <li class="inline">
+            <a
+              href={social.href}
+              target="_blank"
+              referrerpolicy="no-referrer"
+              class="text-neutral-800 text-2xl transition-colors hover:text-success-500 active:text-accent-500"
+            >
+              <i class={social.icon} />
+              <span class="sr-only">{social.name}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>

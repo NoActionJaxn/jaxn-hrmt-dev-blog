@@ -25,7 +25,7 @@ import SOCIALS from "../constants/socials";
         </ul>
       </nav>
     </div>
-    <div class="flex justify-end items-baseline gap-8">
+    <div class="flex justify-end items-baseline gap-4">
       <Accent size="sm" class="uppercase text-neutral-100 select-none">Follow Me</Accent>
       <nav>
         <ul class="space-x-2">
@@ -54,6 +54,7 @@ import SOCIALS from "../constants/socials";
     const menu = document.getElementById("page-menu");
     const header = document.getElementById("page-header");
     const wrapper = document.getElementById("page-wrapper");
+    const footer = document.getElementById("page-footer");
 
     // Apply stored state instantly on load (no transition flash)
     if (isMenuOpen.get() && menu) {
@@ -62,6 +63,7 @@ import SOCIALS from "../constants/socials";
       menu.classList.add("translate-x-0");
       if (header) { header.style.transitionDuration = "0s"; header.style.right = "50vw"; }
       if (wrapper) { wrapper.style.transitionDuration = "0s"; wrapper.style.marginRight = "50vw"; }
+      if (footer) footer.style.display = "none";
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           menu!.style.transitionDuration = "";
@@ -78,11 +80,13 @@ import SOCIALS from "../constants/socials";
         menu.classList.add("translate-x-0");
         if (header) header.style.right = "50vw";
         if (wrapper) wrapper.style.marginRight = "50vw";
+        if (footer) footer.style.display = "none";
       } else {
         menu.classList.remove("translate-x-0");
         menu.classList.add("translate-x-full");
         if (header) header.style.right = "0";
         if (wrapper) wrapper.style.marginRight = "0";
+        if (footer) footer.style.display = "";
       }
     });
   });

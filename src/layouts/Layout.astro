@@ -1,9 +1,10 @@
 ---
-import { ClientRouter } from 'astro:transitions';
+import { ClientRouter } from "astro:transitions";
 import PageWrapper from "../components/PageWrapper.astro";
 import PageHeader from "../components/PageHeader.astro";
 import PageMenu from "../components/PageMenu.astro";
 import "../styles/global.css";
+import PageFooter from "../components/PageFooter.astro";
 
 interface Props {
 	pageTitle?: string;
@@ -91,7 +92,10 @@ const {
 		<PageHeader />
 		<PageMenu />
 		<PageWrapper title={asideTitle} description={asideDescription}>
-			<slot />
+			<div class="grow">
+				<slot />
+			</div>
+			<PageFooter />
 		</PageWrapper>
 	</body>
 </html>
