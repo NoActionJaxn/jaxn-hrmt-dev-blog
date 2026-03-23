@@ -11,6 +11,8 @@ import client from "../../../tina/__generated__/client";
 import formatDate from "../../util/formatDate";
 import PostInfo from "../../components/PostInfo.astro";
 import { t } from "../../i18n/utils";
+import AnimationController from "../../components/AnimationController.astro";
+import FadeContainer from "../../components/FadeContainer.astro";
 
 export async function getStaticPaths() {
   const res = await client.queries.worksConnection();
@@ -50,46 +52,55 @@ const updatedDate =
   metaImage={work.metadata?.image || undefined}
   metaType={work.metadata?.type || undefined}
 >
-  <article class="px-4 py-8 flex flex-col gap-8 max-w-4xl mx-auto">
-    <div class="space-y-2">
-      <Button asChild variant="ghost">
-        <a href="/works" class="gap-2" aria-label={t("works.backLabel")}>
-          <i class="fa-solid fa-chevron-left text-xs mt-0.5" aria-hidden="true"
-          ></i>
-          <span>{t("works.back")}</span>
-        </a>
-      </Button>
+  <AnimationController>
+    <article class="px-4 py-8 flex flex-col gap-8 max-w-4xl mx-auto">
+      <div class="space-y-2">
+        <FadeContainer>
+        <Button asChild variant="ghost">
+          <a href="/works" class="gap-2" aria-label={t("works.backLabel")}>
+            <i
+              class="fa-solid fa-chevron-left text-xs mt-0.5"
+              aria-hidden="true"></i>
+            <span>{t("works.back")}</span>
+          </a>
+        </Button>
+        </FadeContainer>
+        {
+          work.thumbnail && (
+            <FadeContainer>
+              <Image
+                src={work.thumbnail}
+                alt={work.title}
+                class="w-full aspect-video"
+              />
+            </FadeContainer>
+          )
+        }
+      </div>
+
+      <FadeContainer class="flex flex-col gap-2">
+        <Header variant="h1" size="lg">{work.title}</Header>
+        <PostInfo
+          createdAt={formattedDate}
+          updatedAt={updatedDate}
+          isUpdated={work.isUpdated ?? false}
+          readTime={work.metadata?.readTime ?? undefined}
+        />
+      </FadeContainer>
+
+      <FadeContainer class="space-y-8">
       {
-        work.thumbnail && (
-          <Image
-            src={work.thumbnail}
-            alt={work.title}
-            class="w-full aspect-video"
-          />
+        tags.length > 0 && (
+          <div class="flex flex-wrap gap-1">
+            {tags.map((tag) => (
+              <Tag size="sm">{tag}</Tag>
+            ))}
+          </div>
         )
       }
-    </div>
 
-    <div class="flex flex-col gap-2">
-      <Header variant="h1" size="lg">{work.title}</Header>
-      <PostInfo
-        createdAt={formattedDate}
-        updatedAt={updatedDate}
-        isUpdated={work.isUpdated ?? false}
-        readTime={work.metadata?.readTime ?? undefined}
-      />
-    </div>
-
-    {
-      tags.length > 0 && (
-        <div class="flex flex-wrap gap-1">
-          {tags.map((tag) => (
-            <Tag size="sm">{tag}</Tag>
-          ))}
-        </div>
-      )
-    }
-
-    <div class="prose prose-neutral max-w-none" set:html={bodyHtml} />
-  </article>
+        <div class="prose prose-neutral max-w-none" set:html={bodyHtml} />
+      </FadeContainer>
+    </article>
+  </AnimationController>
 </Layout>

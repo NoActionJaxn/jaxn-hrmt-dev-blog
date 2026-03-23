@@ -10,34 +10,37 @@ import CollapsibleGroup from "../components/CollapsibleGroup.astro";
 import Collapsible from "../components/Collapsible.astro";
 import Button from "../components/Button.astro";
 import { t } from "../i18n/utils";
+import AnimationController from "../components/AnimationController.astro";
+import FadeContainer from "../components/FadeContainer.astro";
 ---
 
 <Layout pageTitle={t("about.pageTitle")} asideTitle={t("about.asideTitle")}>
-  <GridBox columns={2} gap={12}>
-    <div>
-      <Image class="aspect-4/3" />
-    </div>
-    <div class="flex flex-col justify-center">
-      <Quote>
-        {t("about.quote")}
-      </Quote>
-    </div>
-    <div class="space-y-4">
-      <div>
-        <Header variant="h2" size="lg">{t("about.sectionTitle")}</Header>
-        <Accent>{t("about.sectionSubtitle")}</Accent>
-      </div>
-			<div>
-				<Text>
-					{t("about.sectionText")}
-				</Text>
-			</div>
-			<Button asChild>
-				<a href="">{t("about.downloadResume")}</a>
-			</Button>
-    </div>
-    <div>
-			<CollapsibleGroup accordion>
+	<AnimationController>
+		<GridBox columns={2} gap={12}>
+			<FadeContainer>
+				<Image class="aspect-4/3" />
+			</FadeContainer>
+			<FadeContainer class="flex flex-col justify-center">
+				<Quote>
+					{t("about.quote")}
+				</Quote>
+			</FadeContainer>
+			<FadeContainer class="space-y-4">
+				<div>
+					<Header variant="h2" size="lg">{t("about.sectionTitle")}</Header>
+					<Accent>{t("about.sectionSubtitle")}</Accent>
+				</div>
+				<div>
+					<Text>
+						{t("about.sectionText")}
+					</Text>
+				</div>
+				<Button asChild>
+					<a href="">{t("about.downloadResume")}</a>
+				</Button>
+			</FadeContainer>
+			<FadeContainer>
+				<CollapsibleGroup accordion>
 					<Collapsible title={t("about.accordion1Title")} open>
 						<p>
 							{t("about.accordion1Text")}
@@ -54,6 +57,7 @@ import { t } from "../i18n/utils";
 						</p>
 					</Collapsible>
 				</CollapsibleGroup>
-		</div>
-  </GridBox>
+			</FadeContainer>
+		</GridBox>
+	</AnimationController>
 </Layout>

@@ -18,9 +18,9 @@ describe("AnimationController", () => {
     expect($("[data-animation-controller]").attr("data-animation-delay")).toBe("200");
   });
 
-  it("has default duration of 500", async () => {
+  it("has default duration of 300", async () => {
     const $ = await renderComponent(AnimationController, {}, { default: "<div>child</div>" });
-    expect($("[data-animation-controller]").attr("data-animation-duration")).toBe("500");
+    expect($("[data-animation-controller]").attr("data-animation-duration")).toBe("300");
   });
 
   it("accepts custom delay", async () => {

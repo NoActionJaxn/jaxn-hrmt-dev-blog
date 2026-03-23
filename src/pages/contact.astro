@@ -8,17 +8,19 @@ import Select from "../components/Select.astro";
 import Button from "../components/Button.astro";
 import GridBox from "../components/GridBox.astro";
 import { t } from "../i18n/utils";
+import AnimationController from "../components/AnimationController.astro";
+import FadeContainer from "../components/FadeContainer.astro";
 ---
 
 <Layout pageTitle={t("contact.pageTitle")} asideTitle={t("contact.asideTitle")}>
-  <div class="flex flex-col gap-y-6 gap-x-4 p-4">
-    <div class="space-y-2">
+  <AnimationController class="flex flex-col gap-y-6 gap-x-4 p-4">
+    <FadeContainer class="space-y-2">
       <Header variant="h2" size="xl">{t("contact.heading")}</Header>
       <Text>
         {t("contact.description")}
       </Text>
-    </div>
-    <div class="pt-8">
+    </FadeContainer>
+    <FadeContainer class="pt-8">
       <form>
         <GridBox columns={2} gap={4}>
           <div>
@@ -76,6 +78,6 @@ import { t } from "../i18n/utils";
           </div>
         </GridBox>
       </form>
-    </div>
-  </div>
+    </FadeContainer>
+  </AnimationController>
 </Layout>

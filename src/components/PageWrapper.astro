@@ -20,7 +20,7 @@ const { title, description } = Astro.props;
   <aside
     class="fixed left-8 top-28 bottom-0 hidden md:flex flex-col justify-between py-8 w-18 z-30"
   >
-    <div class="w-64 origin-top-left rotate-90 translate-x-18 -space-y-2">
+    <div class="w-max origin-top-left rotate-90 translate-x-18 -space-y-2">
       <Header size="xs" class="select-none">{title}</Header>
       <Text as="span" size="xs" class="select-none">
         {description}

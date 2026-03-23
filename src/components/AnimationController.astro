@@ -7,7 +7,7 @@ interface Props {
   class?: string;
 }
 
-const { delay = 200, duration = 500, class: className } = Astro.props;
+const { delay = 200, duration = 300, class: className } = Astro.props;
 ---
 
 <div
@@ -20,17 +20,23 @@ const { delay = 200, duration = 500, class: className } = Astro.props;
 </div>
 
 <script>
-  function initController(controller: HTMLElement) {
-    const delay = Number(controller.dataset.animationDelay ?? 200);
-    const duration = Number(controller.dataset.animationDuration ?? 500);
-    const items = Array.from(controller.querySelectorAll<HTMLElement>("[data-fade-container]"));
+import type { TransitionBeforePreparationEvent } from "astro/virtual-modules/transitions-events.js";
 
+  function getSortedItems(controller: HTMLElement) {
+    const items = Array.from(controller.querySelectorAll<HTMLElement>("[data-fade-container]"));
     items.sort((a, b) => {
       const rectA = a.getBoundingClientRect();
       const rectB = b.getBoundingClientRect();
       if (Math.abs(rectA.top - rectB.top) > 1) return rectA.top - rectB.top;
       return rectA.left - rectB.left;
     });
+    return items;
+  }
+
+  function initController(controller: HTMLElement) {
+    const delay = Number(controller.dataset.animationDelay ?? 200);
+    const duration = Number(controller.dataset.animationDuration ?? 500);
+    const items = getSortedItems(controller);
 
     items.forEach((item, index) => {
       item.style.transition = `opacity ${duration}ms ease`;
@@ -38,6 +44,31 @@ const { delay = 200, duration = 500, class: className } = Astro.props;
         item.style.opacity = "1";
       }, index * delay);
     });
+  }
+
+  function reverseControllers(): Promise<void> {
+    const controllers = document.querySelectorAll<HTMLElement>("[data-animation-controller]");
+    if (controllers.length === 0) return Promise.resolve();
+
+    let maxWait = 0;
+
+    controllers.forEach((controller) => {
+      const delay = Number(controller.dataset.animationDelay ?? 200);
+      const duration = Number(controller.dataset.animationDuration ?? 500);
+      const items = getSortedItems(controller).reverse();
+
+      items.forEach((item, index) => {
+        item.style.transition = `opacity ${duration}ms ease`;
+        setTimeout(() => {
+          item.style.opacity = "0";
+        }, index * delay);
+      });
+
+      const totalWait = (items.length - 1) * delay + duration;
+      if (totalWait > maxWait) maxWait = totalWait;
+    });
+
+    return new Promise((resolve) => setTimeout(resolve, maxWait));
   }
 
   requestAnimationFrame(() => {
@@ -48,5 +79,14 @@ const { delay = 200, duration = 500, class: className } = Astro.props;
     requestAnimationFrame(() => {
       document.querySelectorAll<HTMLElement>("[data-animation-controller]").forEach(initController);
     });
+  });
+
+  document.addEventListener("astro:before-preparation", (event) => {
+    const e = event as TransitionBeforePreparationEvent;
+    const originalLoader = e.loader;
+    e.loader = async () => {
+      await reverseControllers();
+      await originalLoader();
+    };
   });
 </script>

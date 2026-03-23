@@ -3,11 +3,19 @@ import Layout from "../layouts/Layout.astro";
 import Image from "../components/Image.astro";
 import Quote from "../components/Quote.astro";
 import { t } from "../i18n/utils";
+import AnimationController from "../components/AnimationController.astro";
+import FadeContainer from "../components/FadeContainer.astro";
 ---
 
 <Layout pageTitle={t("index.pageTitle")} asideTitle={t("index.asideTitle")}>
-	<Image class="aspect-4/3" />
-	<Quote>
-		{t("index.quote")}
-	</Quote>
+	<AnimationController>
+		<FadeContainer>
+			<Image class="aspect-4/3" />
+		</FadeContainer>
+		<FadeContainer>
+			<Quote>
+				{t("index.quote")}
+			</Quote>
+		</FadeContainer>
+	</AnimationController>
 </Layout>
