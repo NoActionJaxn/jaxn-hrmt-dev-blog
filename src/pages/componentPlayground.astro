@@ -22,6 +22,7 @@ import Layout from "../layouts/Layout.astro";
 import Logo from "../components/Logo.astro";
 import Quote from "../components/Quote.astro";
 import TagInput from "../components/TagInput.astro";
+import PostInfo from "../components/PostInfo.astro";
 ---
 
 <Layout>
@@ -223,6 +224,14 @@ import TagInput from "../components/TagInput.astro";
 					{ label: "Go", value: "go" },
 				]}
 				placeholder="Search skills..."
+			/>
+		</div>
+		<div>
+			<PostInfo
+				createdAt={new Date("2024-01-01T12:00:00Z")}
+				updatedAt={new Date("2024-02-01T12:00:00Z")}
+				isUpdated
+				readTime={5}
 			/>
 		</div>
 	</div>

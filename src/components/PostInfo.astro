@@ -1,0 +1,49 @@
+---
+import classNames from "classnames";
+import Text from "./Text.astro";
+import formatDate from "../util/formatDate";
+
+interface Props {
+  createdAt?: string;
+  updatedAt?: string;
+  isUpdated?: boolean;
+  class?: string;
+  readTime?: number;
+}
+
+const {
+  createdAt,
+  updatedAt,
+  isUpdated = false,
+  class: className,
+  readTime,
+} = Astro.props;
+---
+
+<div
+  class={classNames(
+    "flex justify-between border-b-2 border-dotted border-neutral-800 py-1",
+    className,
+  )}
+>
+  <div class="flex gap-2">
+    <div>
+      {
+        createdAt && (
+          <Text size="sm" class="font-bold">Published: {formatDate(createdAt)}</Text>
+        )
+      }
+    </div>
+    <div>
+      {
+        isUpdated && updatedAt && (
+          <Text size="xs" class="italic text-neutral-400!"> Updated: {formatDate(updatedAt)}</Text>
+        )
+      }
+    </div>
+  </div>
+
+  <div>
+    {readTime != null && <Text size="sm" class="font-bold">Read Time: {readTime} min read</Text>}
+  </div>
+</div>

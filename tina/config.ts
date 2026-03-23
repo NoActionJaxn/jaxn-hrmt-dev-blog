@@ -1,5 +1,21 @@
 import { defineConfig } from "tinacms";
 
+function extractText(node: any): string {
+  if (!node) return "";
+  if (typeof node === "string") return node;
+  if (node.text) return node.text;
+  if (Array.isArray(node.children)) {
+    return node.children.map(extractText).join("");
+  }
+  return "";
+}
+
+function calculateReadTime(body: any): number {
+  const text = extractText(body);
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -103,6 +119,7 @@ export default defineConfig({
                 image: values.thumbnail || values.metadata?.image || "",
                 author: values.metadata?.author || "Jackson Hermitt",
                 type: values.metadata?.type || "article",
+                readTime: calculateReadTime(values.body),
               },
             };
           },
@@ -197,6 +214,15 @@ export default defineConfig({
                 options: ["website", "article"],
                 ui: {
                   defaultValue: "article",
+                },
+              },
+              {
+                type: "number",
+                name: "readTime",
+                label: "Read Time (min)",
+                description: "Auto-calculated on save from body content.",
+                ui: {
+                  component: () => null,
                 },
               },
             ],
