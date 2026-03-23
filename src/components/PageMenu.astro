@@ -7,10 +7,10 @@ import SOCIALS from "../constants/socials";
 
 <div
   id="page-menu"
-  class="fixed top-0 right-0 h-screen z-30 bg-neutral-800 text-neutral-100 w-1/2 translate-x-full transition-transform duration-300 ease-in-out"
+  class="fixed top-0 right-0 h-screen z-30 bg-neutral-800 text-neutral-100 w-full md:w-1/2 translate-x-full transition-transform duration-300 ease-in-out"
   aria-label="Main menu"
 >
-  <div class="flex flex-col justify-between w-full h-full p-24">
+  <div class="flex flex-col justify-between w-full h-full p-8 pt-24 md:p-24">
     <div class="flex flex-col gap-16">
       <Accent as="h2" size="2xl" class="uppercase text-neutral-100 select-none"
         >Content</Accent
@@ -48,6 +48,8 @@ import SOCIALS from "../constants/socials";
 
   let unsub: (() => void) | null = null;
 
+  const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
   document.addEventListener("astro:page-load", () => {
     if (unsub) unsub();
 
@@ -56,37 +58,68 @@ import SOCIALS from "../constants/socials";
     const wrapper = document.getElementById("page-wrapper");
     const footer = document.getElementById("page-footer");
 
+    const mobileBackToTop = document.querySelector("[data-back-to-top-mobile]") as HTMLElement | null;
+    const menuToggle = document.querySelector("[data-menu-toggle]") as HTMLElement | null;
+
     // Apply stored state instantly on load (no transition flash)
     if (isMenuOpen.get() && menu) {
+      const mobile = isMobile();
       menu.style.transitionDuration = "0s";
       menu.classList.remove("translate-x-full");
       menu.classList.add("translate-x-0");
-      if (header) { header.style.transitionDuration = "0s"; header.style.right = "50vw"; }
-      if (wrapper) { wrapper.style.transitionDuration = "0s"; wrapper.style.marginRight = "50vw"; }
+      if (header) {
+        header.style.transitionDuration = "0s";
+        if (mobile) {
+          header.classList.replace("bg-neutral-100", "bg-neutral-800");
+          header.classList.add("text-neutral-100");
+          if (menuToggle) menuToggle.classList.replace("text-neutral-700", "text-neutral-100");
+        } else {
+          header.style.right = "50vw";
+        }
+      }
+      if (!mobile && wrapper) {
+        wrapper.style.transitionDuration = "0s";
+        wrapper.style.marginRight = "50vw";
+      }
       if (footer) footer.style.display = "none";
+      if (mobileBackToTop) mobileBackToTop.style.display = "none";
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           menu!.style.transitionDuration = "";
           if (header) header.style.transitionDuration = "";
           if (wrapper) wrapper.style.transitionDuration = "";
+          if (footer) footer.style.transitionDuration = "";
         });
       });
     }
 
     unsub = isMenuOpen.subscribe((open) => {
       if (!menu) return;
+      const mobile = isMobile();
       if (open) {
         menu.classList.remove("translate-x-full");
         menu.classList.add("translate-x-0");
-        if (header) header.style.right = "50vw";
-        if (wrapper) wrapper.style.marginRight = "50vw";
-        if (footer) footer.style.display = "none";
+        if (mobile && header) {
+          header.classList.replace("bg-neutral-100", "bg-neutral-800");
+          header.classList.add("text-neutral-100");
+          if (menuToggle) menuToggle.classList.replace("text-neutral-700", "text-neutral-100");
+        }
+        if (!mobile && header) header.style.right = "50vw";
+        if (!mobile && wrapper) wrapper.style.marginRight = "50vw";
+        if (footer) footer.classList.add("opacity-0", "pointer-events-none");
+        if (mobileBackToTop) mobileBackToTop.style.display = "none";
       } else {
         menu.classList.remove("translate-x-0");
         menu.classList.add("translate-x-full");
-        if (header) header.style.right = "0";
+        if (header) {
+          header.classList.replace("bg-neutral-800", "bg-neutral-100");
+          header.classList.remove("text-neutral-100");
+          header.style.right = "0";
+        }
+        if (menuToggle) menuToggle.classList.replace("text-neutral-100", "text-neutral-700");
         if (wrapper) wrapper.style.marginRight = "0";
-        if (footer) footer.style.display = "";
+        if (footer) footer.classList.remove("opacity-0", "pointer-events-none");
+        if (mobileBackToTop) mobileBackToTop.style.display = "";
       }
     });
   });

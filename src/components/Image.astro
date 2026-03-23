@@ -16,20 +16,20 @@ const { src, alt = "", width, height, loading = "lazy", class: className } = Ast
 
 const isStringPath = typeof src === "string";
 
-const imageProps = {
-  src: src!,
+const baseProps = {
   alt,
   loading,
   decoding: "async" as const,
   class: classNames("object-cover", className),
-  ...(isStringPath && { width: width ?? 800, height: height ?? 600 }),
-  ...(!isStringPath && width != null && { width }),
-  ...(!isStringPath && height != null && { height }),
 };
 ---
 
 {src ? (
-  <AstroImage {...imageProps} />
+  isStringPath ? (
+    <AstroImage src={src} width={width ?? 800} height={height ?? 600} {...baseProps} />
+  ) : (
+    <AstroImage src={src as ImageMetadata} width={width} height={height} {...baseProps} />
+  )
 ) : (
   <div
     role="img"
